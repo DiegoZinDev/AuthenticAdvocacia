@@ -7,6 +7,7 @@ import {
   ChevronUp,
   Clock,
   Cpu,
+  MessageCircle,
   Radio,
   Search,
   Smartphone,
@@ -21,14 +22,20 @@ import type { ContextState, LeadOriginPreset } from '../types/legal';
 
 interface LeadOriginSimulatorProps {
   contextState: ContextState;
+  whatsappDossierText: string;
   onSimulate: (preset: LeadOriginPreset) => void;
 }
 
 type SimulatorTab = 'cross-intent' | 'direct';
 
-export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimulatorProps) {
+export function LeadOriginSimulator({
+  contextState,
+  whatsappDossierText,
+  onSimulate,
+}: LeadOriginSimulatorProps) {
   const [expanded, setExpanded] = useState(false);
   const [tab, setTab] = useState<SimulatorTab>('cross-intent');
+  const [showDossierPreview, setShowDossierPreview] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -158,6 +165,43 @@ export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimu
                   </button>
                 );
               })}
+            </div>
+
+            <div className="sim-dossier-toggle-wrap">
+              <button
+                type="button"
+                className={`sim-dossier-toggle-btn ${showDossierPreview ? 'is-open' : ''}`}
+                onClick={() => setShowDossierPreview((prev) => !prev)}
+                aria-expanded={showDossierPreview}
+              >
+                <MessageCircle size={12} strokeWidth={1.8} aria-hidden="true" />
+                <span>Ver Mensagem Gerada para o WhatsApp do Advogado</span>
+                {showDossierPreview ? (
+                  <ChevronUp size={12} strokeWidth={1.8} aria-hidden="true" />
+                ) : (
+                  <ChevronDown size={12} strokeWidth={1.8} aria-hidden="true" />
+                )}
+              </button>
+
+              <AnimatePresence initial={false}>
+                {showDossierPreview && (
+                  <motion.div
+                    key="whatsapp-dossier-preview"
+                    className="sim-whatsapp-preview-card"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="sim-whatsapp-preview-inner">
+                      <span className="sim-whatsapp-preview-label">
+                        Prévia da Triagem Silenciosa • WhatsApp
+                      </span>
+                      <pre className="sim-whatsapp-preview-text">{whatsappDossierText}</pre>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className="floating-sim-telemetry">

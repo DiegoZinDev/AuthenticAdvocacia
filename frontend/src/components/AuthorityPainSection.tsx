@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, ShieldCheck, Award } from 'lucide-react';
+import { MessageCircle, ShieldCheck, Award, Scale } from 'lucide-react';
 import { PERSONA_CONTENTS } from '../data/seeds';
 import type { LawyerProfile, PersonaId } from '../types/legal';
 
@@ -10,15 +10,7 @@ interface AuthorityPainSectionProps {
   onSectionVisible: (persona: PersonaId) => void;
 }
 
-function getInitials(name: string): string {
-  const parts = name
-    .replace(/^(Dr\.|Dra\.)\s+/i, '')
-    .trim()
-    .split(/\s+/);
-  if (parts.length === 0) return 'HV';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-}
+const JURISDICTION_COURTS = ['TJDFT', 'TRT-10', 'TRF-1', 'STJ'];
 
 export function AuthorityPainSection({
   profile,
@@ -27,7 +19,6 @@ export function AuthorityPainSection({
   onSectionVisible,
 }: AuthorityPainSectionProps) {
   const persona = PERSONA_CONTENTS[personaId];
-  const initials = getInitials(profile.lawyerName);
 
   return (
     <motion.section
@@ -76,84 +67,77 @@ export function AuthorityPainSection({
                 ))}
               </motion.div>
             </AnimatePresence>
-
-            <blockquote className="editorial-quote">
-              <p>“{profile.editorialQuote}”</p>
-              <footer>
-                — {profile.lawyerName}, {profile.oabNumber}
-              </footer>
-            </blockquote>
           </div>
 
-          {/* Right Column: Lawyer Authority Portrait & Direct WhatsApp */}
-          <aside className="lawyer-authority-card" aria-label="Credenciais do advogado titular">
-            <div className="portrait-frame">
-              {profile.photoUrl ? (
-                <img
-                  src={profile.photoUrl}
-                  alt={`Retrato profissional de ${profile.lawyerName}`}
-                  className="portrait-image"
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    target.style.display = 'none';
-                    const fallback = target.nextElementSibling as HTMLElement | null;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
-                />
-              ) : null}
-              <div
-                className="portrait-monogram-fallback"
-                style={{ display: profile.photoUrl ? 'none' : 'flex' }}
-              >
-                <span>{initials}</span>
+          {/* Right Column: Painel Editorial de Métricas & Jurisdição */}
+          <aside
+            className="editorial-metrics-panel"
+            aria-label="Painel Editorial de Métricas e Jurisdição"
+          >
+            <div className="metrics-panel-header">
+              <div className="metrics-panel-eyebrow">
+                <Scale size={14} strokeWidth={1.6} aria-hidden="true" />
+                <span>Jurisdição &amp; Desempenho</span>
               </div>
-              <div className="portrait-oab-plate">
-                <span>{profile.oabNumber}</span>
-                <span>{profile.city}</span>
+              <div className="court-badges-strip" aria-label="Tribunais de atuação">
+                {JURISDICTION_COURTS.map((court) => (
+                  <span key={court} className="court-badge-chip">
+                    {court}
+                  </span>
+                ))}
               </div>
             </div>
 
-            <div className="authority-body">
-              <p className="authority-firm">{profile.firmName}</p>
-              <h3 className="authority-lawyer-name">{profile.lawyerName}</h3>
-              <p className="authority-note">{persona.authorityNote}</p>
-
-              <div className="authority-metrics">
-                <div className="authority-metric-cell">
-                  <span className="metric-value">{profile.experienceYears} anos</span>
-                  <span className="metric-label">Atuação em Tribunais</span>
-                </div>
-                <div className="authority-metric-cell">
-                  <span className="metric-value">+{profile.solvedCasesCount}</span>
-                  <span className="metric-label">Casos Conduzidos</span>
-                </div>
+            <div className="metrics-panel-kpis">
+              <div className="panel-kpi-cell">
+                <span className="panel-kpi-value">{profile.experienceYears}+</span>
+                <span className="panel-kpi-label">Anos de Atuação</span>
               </div>
-
-              <div className="authority-guarantees">
-                <div className="guarantee-line">
-                  <ShieldCheck size={15} strokeWidth={1.6} aria-hidden="true" />
-                  <span>Atendimento direto com o sócio titular, sem triagem robotizada</span>
-                </div>
-                <div className="guarantee-line">
-                  <Award size={15} strokeWidth={1.6} aria-hidden="true" />
-                  <span>Parecer de viabilidade processual em linguagem clara</span>
-                </div>
+              <div className="panel-kpi-cell">
+                <span className="panel-kpi-value">{profile.solvedCasesCount}+</span>
+                <span className="panel-kpi-label">Casos Resolvidos</span>
               </div>
+              <div className="panel-kpi-cell">
+                <span className="panel-kpi-value">24h a 72h</span>
+                <span className="panel-kpi-label">Tempo Médio de Liminar</span>
+              </div>
+            </div>
 
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary-gold full-width"
-              >
-                <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
-                <span>{persona.ctaLabel}</span>
-              </a>
+            <blockquote className="editorial-quote metrics-panel-quote">
+              <p>“{profile.editorialQuote}”</p>
+            </blockquote>
 
-              <p className="whatsapp-preview-caption">
-                Mensagem pré-configurada para <strong>{persona.areaLabel}</strong>.
+            <div className="partner-care-seal">
+              <div className="partner-care-badge">
+                <Award size={15} strokeWidth={1.7} aria-hidden="true" />
+                <span>Atendimento Direto pelo Titular</span>
+              </div>
+              <p className="partner-care-identity">
+                {profile.lawyerName} • {profile.oabNumber}
               </p>
+              <p className="partner-care-note">{persona.authorityNote}</p>
             </div>
+
+            <div className="metrics-panel-guarantees">
+              <div className="guarantee-line">
+                <ShieldCheck size={15} strokeWidth={1.6} aria-hidden="true" />
+                <span>Análise estratégica direta com o sócio titular, sem robôs</span>
+              </div>
+            </div>
+
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary-gold full-width"
+            >
+              <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
+              <span>{persona.ctaLabel}</span>
+            </a>
+
+            <p className="whatsapp-preview-caption">
+              Dossiê pré-estruturado para <strong>{persona.areaLabel}</strong>.
+            </p>
           </aside>
         </div>
       </div>

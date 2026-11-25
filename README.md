@@ -105,7 +105,13 @@ Implementado em `frontend/src/lib/predictiveIntentEngine.ts`, o motor calcula em
 - **Pílula Flutuante no Canto Inferior Esquerdo (`frontend/src/components/LeadOriginSimulator.tsx`):**
   - **Aba 1 — Inferência Indireta (Pistas Cruzadas):** cenários demonstrativos como *"Pesquisou dor nas pernas + 57 anos + horário comercial → Previdenciário (96%)"*, *"Acesso 02h via Celular + Bateria 14% → Plantão 24h (98%)"* e *"Leu 2x cláusula de multa + Desktop corporativo → Distrato Imobiliário (93%)"*.
   - **Aba 2 — Buscas Diretas (8 Áreas):** alternância instantânea entre todas as 8 especialidades jurídicas com rolagem suave para o topo e sincronização real da URL.
-  - **Mini-Telemetria Neural ao Vivo:** exibe dentro do próprio modal Dispositivo/Rede, Bateria, Horário, Dwell/Releituras/Velocidade, Vetor Semântico e Score de Confiança.
+  - **Mini-Telemetria Neural ao Vivo & Preview de Triagem WhatsApp:** exibe dentro do próprio modal Dispositivo/Rede, Bateria, Horário, Dwell/Releituras/Velocidade, Vetor Semântico, Score de Confiança e a pré-visualização ao vivo do dossiê de triagem silenciosa enviado ao WhatsApp.
+
+### Upgrade "Gênio da Lâmpada" (Experiência Editorial & Triagem Silenciosa)
+- **Acordeão Horizontal de Precedentes (`SuccessCasesSection.tsx`):** cards expansíveis no hover (desktop) e toque (mobile) que revelam a alavanca estratégica da decisão e um CTA editorial direto abrindo o WhatsApp já citando o precedente expandido.
+- **Triagem Silenciosa no WhatsApp (`buildWhatsAppTriageDossier` + `LeadOriginSimulator.tsx`):** todos os CTAs montam automaticamente um dossiê estruturado com área/dor detectada, precedente analisado, nível de urgência e score de confiança, com preview ao vivo no simulador.
+- **Faixa Dinâmica de Súmulas & Prazos Críticos (`LEGAL_ALERT_BY_PERSONA`):** alerta editorial dinâmico abaixo dos 3 precedentes atualizando Súmula 543 STJ, Prazo Bienal CLT, Lei 14.454/Plantão TJDFT, EC 103/2019 INSS e demais fundamentos críticos das 8 áreas.
+- **Painel Editorial de Métricas & Jurisdição (`AuthorityPainSection.tsx`):** substitui a foto repetida na 3ª dobra por um painel com tribunais (`TJDFT • TRT-10 • TRF-1 • STJ`), KPIs de atuação/tempo médio de liminar e selo de *Atendimento Direto pelo Titular*.
 
 ---
 
