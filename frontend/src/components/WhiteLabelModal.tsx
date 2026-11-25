@@ -23,6 +23,63 @@ function getInitials(name: string): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
+function resizeImageToDataUrl(
+  file: File,
+  maxDimension = 960,
+  quality = 0.86
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Falha ao ler arquivo de imagem.'));
+    reader.onload = () => {
+      const rawDataUrl = typeof reader.result === 'string' ? reader.result : '';
+      if (!rawDataUrl) {
+        reject(new Error('Imagem vazia.'));
+        return;
+      }
+
+      const img = new Image();
+      img.onerror = () => resolve(rawDataUrl);
+      img.onload = () => {
+        try {
+          const width = img.naturalWidth || img.width;
+          const height = img.naturalHeight || img.height;
+          if (!width || !height) {
+            resolve(rawDataUrl);
+            return;
+          }
+
+          const scale = Math.min(1, maxDimension / Math.max(width, height));
+          const targetW = Math.max(1, Math.round(width * scale));
+          const targetH = Math.max(1, Math.round(height * scale));
+
+          const canvas = document.createElement('canvas');
+          canvas.width = targetW;
+          canvas.height = targetH;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(rawDataUrl);
+            return;
+          }
+
+          ctx.fillStyle = '#F7F5F0';
+          ctx.fillRect(0, 0, targetW, targetH);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, targetW, targetH);
+
+          const resizedDataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(resizedDataUrl || rawDataUrl);
+        } catch {
+          resolve(rawDataUrl);
+        }
+      };
+      img.src = rawDataUrl;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export function WhiteLabelModal({
   isOpen,
   profile,
@@ -38,21 +95,28 @@ export function WhiteLabelModal({
   useEffect(() => {
     if (isOpen) {
       setDraft(profile);
-      setFeedback(null);
     }
   }, [isOpen, profile]);
 
-  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  useEffect(() => {
+    if (isOpen) {
+      setFeedback(null);
+    }
+  }, [isOpen]);
+
+  const handlePhotoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    const file = input.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setDraft((prev) => ({ ...prev, photoUrl: reader.result as string }));
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const resizedDataUrl = await resizeImageToDataUrl(file);
+      setDraft((prev) => ({ ...prev, photoUrl: resizedDataUrl }));
+    } catch {
+      // Ignore unreadable image selection
+    } finally {
+      input.value = '';
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
