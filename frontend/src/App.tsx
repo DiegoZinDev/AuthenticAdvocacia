@@ -235,20 +235,20 @@ export function App() {
       </header>
 
       <main id="topo">
-        {/* Hero Editorial Section with Live Context Detection Badge */}
+        {/* Hero Editorial Section — Asymmetric Editorial Split */}
         <section className="hero-section" data-intent-area={contextState.activePersona}>
-          <div className="hero-portrait-backdrop" aria-hidden="true">
-            <div className="hero-portrait-stage">
+          <div className="hero-split-layout">
+            <div className="hero-portrait-column">
               <motion.div
                 key={heroPortraitSrc}
-                className="hero-portrait-figure"
+                className="hero-portrait-frame"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               >
                 <img
                   src={heroPortraitSrc}
-                  alt=""
+                  alt={`${profile.lawyerName} — ${profile.firmName}`}
                   className="hero-portrait-img"
                   decoding="async"
                   onError={() => {
@@ -257,99 +257,98 @@ export function App() {
                     }
                   }}
                 />
-                <div className="hero-portrait-veil" />
               </motion.div>
-              <div className="hero-copy-protection-veil" />
+              <div className="hero-portrait-bridge" aria-hidden="true" />
             </div>
-          </div>
 
-          <div className="editorial-container">
-            <div className="hero-meta-bar">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`ctx-badge-${contextState.activePersona}-${contextState.originSummary}`}
-                  className="live-context-badge"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.28 }}
-                  role="status"
-                  aria-live="polite"
-                >
-                  <span className="live-context-dot" aria-hidden="true" />
-                  <span className="live-context-label">
-                    Contexto identificado:{' '}
-                    <strong>{activePersonaContent.badgeSubtitle}</strong>
-                    <span className="live-context-score">
-                      {' '}
-                      • {Math.round(contextState.confidence * 100)}%
+            <div className="hero-content-column">
+              <div className="hero-content-inner">
+                <div className="hero-meta-bar">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`ctx-badge-${contextState.activePersona}-${contextState.originSummary}`}
+                      className="live-context-badge"
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.28 }}
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <span className="live-context-dot" aria-hidden="true" />
+                      <span className="live-context-label">
+                        Contexto identificado:{' '}
+                        <strong>{activePersonaContent.badgeSubtitle}</strong>
+                        <span className="live-context-score">
+                          {' '}
+                          • {Math.round(contextState.confidence * 100)}%
+                        </span>
+                      </span>
+                    </motion.div>
+                  </AnimatePresence>
+
+                  <span className="hero-jurisdiction-tag">
+                    <MapPin size={13} strokeWidth={1.6} aria-hidden="true" />
+                    <span>
+                      {profile.city} • {contextState.accessPeriod}
                     </span>
                   </span>
-                </motion.div>
-              </AnimatePresence>
-
-              <span className="hero-jurisdiction-tag">
-                <MapPin size={13} strokeWidth={1.6} aria-hidden="true" />
-                <span>
-                  {profile.city} • {contextState.accessPeriod}
-                </span>
-              </span>
-            </div>
-
-            <div className="hero-editorial-grid">
-              <div className="hero-copy-column">
-                <KineticHeadline
-                  personaKey={contextState.activePersona}
-                  text={activePersonaContent.headline}
-                  subheadline={activePersonaContent.subheadline}
-                />
-
-                <div className="hero-cta-row">
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary-gold"
-                  >
-                    <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
-                    <span>{activePersonaContent.ctaLabel}</span>
-                  </a>
-
-                  <a href="#casos-resolvidos" className="btn-secondary-ink">
-                    <span>Ver casos idênticos resolvidos</span>
-                    <ArrowDown size={15} strokeWidth={1.7} aria-hidden="true" />
-                  </a>
                 </div>
-              </div>
 
-              <div className="hero-dossier-card">
-                <div className="dossier-header">
-                  <Scale size={15} strokeWidth={1.6} aria-hidden="true" />
-                  <span>Credencial &amp; Jurisdição</span>
+                <div className="hero-copy-column">
+                  <KineticHeadline
+                    personaKey={contextState.activePersona}
+                    text={activePersonaContent.headline}
+                    subheadline={activePersonaContent.subheadline}
+                  />
+
+                  <div className="hero-cta-row">
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary-gold"
+                    >
+                      <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
+                      <span>{activePersonaContent.ctaLabel}</span>
+                    </a>
+
+                    <a href="#casos-resolvidos" className="btn-secondary-ink">
+                      <span>Ver casos idênticos resolvidos</span>
+                      <ArrowDown size={15} strokeWidth={1.7} aria-hidden="true" />
+                    </a>
+                  </div>
                 </div>
-                <div className="dossier-rule" />
-                <dl className="dossier-list">
-                  <div>
-                    <dt>Titular Responsável</dt>
-                    <dd>{profile.lawyerName}</dd>
+
+                <aside className="hero-dossier-card" aria-label="Credencial e Jurisdição">
+                  <div className="dossier-header">
+                    <Scale size={15} strokeWidth={1.6} aria-hidden="true" />
+                    <span>Credencial &amp; Jurisdição</span>
                   </div>
-                  <div>
-                    <dt>Inscrição</dt>
-                    <dd>{profile.oabNumber}</dd>
+                  <div className="dossier-rule" />
+                  <dl className="dossier-list">
+                    <div>
+                      <dt>Titular Responsável</dt>
+                      <dd>{profile.lawyerName}</dd>
+                    </div>
+                    <div>
+                      <dt>Inscrição</dt>
+                      <dd>{profile.oabNumber}</dd>
+                    </div>
+                    <div>
+                      <dt>Foco em Tempo Real</dt>
+                      <dd>{activePersonaContent.areaLabel}</dd>
+                    </div>
+                    <div>
+                      <dt>Tribunais de Atuação</dt>
+                      <dd>{activePersonaContent.courtFocus}</dd>
+                    </div>
+                  </dl>
+                  <div className="dossier-footer-note">
+                    <Shield size={13} strokeWidth={1.6} aria-hidden="true" />
+                    <span>Sigilo profissional garantido (Art. 7º, Estatuto da OAB)</span>
                   </div>
-                  <div>
-                    <dt>Foco em Tempo Real</dt>
-                    <dd>{activePersonaContent.areaLabel}</dd>
-                  </div>
-                  <div>
-                    <dt>Tribunais de Atuação</dt>
-                    <dd>{activePersonaContent.courtFocus}</dd>
-                  </div>
-                </dl>
-                <div className="dossier-footer-note">
-                  <Shield size={13} strokeWidth={1.6} aria-hidden="true" />
-                  <span>Sigilo profissional garantido (Art. 7º, Estatuto da OAB)</span>
-                </div>
+                </aside>
               </div>
             </div>
           </div>
