@@ -222,82 +222,34 @@ button {
 }
 
 /* =========================================================
-   HERO SECTION
+   HERO SECTION — ASYMMETRIC EDITORIAL SPLIT
    ========================================================= */
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 40px 0 54px;
-  background: linear-gradient(180deg, var(--paper) 0%, var(--ivory) 100%);
+  background: #F7F5F0;
   border-bottom: 1px solid var(--rule-gold);
 }
 
-.hero-section > .editorial-container {
-  position: relative;
-  z-index: 2;
+.hero-split-layout {
+  display: grid;
+  grid-template-columns: 38% 62%;
+  min-height: 540px;
+  align-items: stretch;
 }
 
-.hero-portrait-backdrop {
+.hero-portrait-column {
+  position: relative;
+  background: #090D16;
+  overflow: hidden;
+  min-height: 100%;
+}
+
+.hero-portrait-frame {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.hero-portrait-stage {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  height: 100%;
-  margin: 0 auto;
-}
-
-.hero-portrait-figure {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 34%;
-  width: min(540px, 46%);
-  overflow: hidden;
-  -webkit-mask-image:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.22) 16%,
-      rgba(0, 0, 0, 0.88) 42%,
-      rgba(0, 0, 0, 1) 58%,
-      rgba(0, 0, 0, 0.35) 84%,
-      transparent 100%
-    ),
-    linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.7) 14%,
-      rgba(0, 0, 0, 1) 34%,
-      rgba(0, 0, 0, 0.92) 72%,
-      transparent 100%
-    );
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.22) 16%,
-      rgba(0, 0, 0, 0.88) 42%,
-      rgba(0, 0, 0, 1) 58%,
-      rgba(0, 0, 0, 0.35) 84%,
-      transparent 100%
-    ),
-    linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.7) 14%,
-      rgba(0, 0, 0, 1) 34%,
-      rgba(0, 0, 0, 0.92) 72%,
-      transparent 100%
-    );
-  mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 62%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 62%, transparent 100%);
 }
 
 .hero-portrait-img {
@@ -305,49 +257,35 @@ button {
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: center 18%;
-  filter: grayscale(92%) sepia(8%) contrast(1.06) brightness(1.03);
-  opacity: 0.3;
-  transform: scale(1.02);
+  object-position: center 15%;
+  opacity: 1;
+  filter: contrast(1.06) saturate(0.92);
 }
 
-.hero-portrait-veil {
+.hero-portrait-bridge {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(
-      ellipse 78% 72% at 54% 42%,
-      rgba(247, 245, 240, 0) 34%,
-      rgba(247, 245, 240, 0.56) 76%,
-      rgba(247, 245, 240, 0.96) 100%
-    ),
-    linear-gradient(
-      90deg,
-      var(--paper) 0%,
-      rgba(247, 245, 240, 0.45) 20%,
-      rgba(247, 245, 240, 0) 46%,
-      rgba(247, 245, 240, 0.42) 82%,
-      var(--paper) 100%
-    ),
-    linear-gradient(
-      180deg,
-      var(--paper) 0%,
-      rgba(247, 245, 240, 0) 18%,
-      rgba(252, 251, 248, 0) 74%,
-      var(--ivory) 100%
-    );
-}
-
-.hero-copy-protection-veil {
-  position: absolute;
-  inset: 0;
+  pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(247, 245, 240, 0.96) 0%,
-    rgba(247, 245, 240, 0.86) 36%,
-    rgba(247, 245, 240, 0.52) 52%,
-    rgba(247, 245, 240, 0) 70%
+    rgba(9, 13, 22, 0) 48%,
+    rgba(247, 245, 240, 0.85) 84%,
+    #F7F5F0 100%
   );
+}
+
+.hero-content-column {
+  position: relative;
+  z-index: 2;
+  background: #F7F5F0;
+  display: flex;
+  align-items: center;
+  padding: 36px clamp(28px, 4.5vw, 68px) 44px clamp(16px, 2.5vw, 40px);
+}
+
+.hero-content-inner {
+  width: 100%;
+  max-width: 780px;
 }
 
 .hero-meta-bar {
@@ -360,7 +298,7 @@ button {
   flex-wrap: wrap;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--rule-gold);
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .live-context-badge {
@@ -398,31 +336,21 @@ button {
   color: var(--ink-muted);
 }
 
-.hero-editorial-grid {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1.45fr 0.75fr;
-  gap: 56px;
-  align-items: start;
-}
-
 .hero-copy-column {
   position: relative;
   z-index: 2;
-  text-shadow: 0 1px 16px rgba(247, 245, 240, 0.85);
 }
 
 .kinetic-headline-wrap {
-  min-height: 210px;
+  min-height: 170px;
 }
 
 .hero-headline {
-  margin: 0 0 24px;
+  margin: 0 0 18px;
   font-family: var(--serif);
-  font-size: clamp(2.55rem, 4.8vw, 4.1rem);
+  font-size: clamp(2.2rem, 3.4vw, 3.45rem);
   font-weight: 600;
-  line-height: 1.07;
+  line-height: 1.08;
   letter-spacing: -0.015em;
   color: var(--navy);
 }
@@ -435,17 +363,17 @@ button {
 .hero-subheadline {
   margin: 0;
   max-width: 640px;
-  font-size: 1.08rem;
-  line-height: 1.7;
+  font-size: 1.04rem;
+  line-height: 1.68;
   color: var(--ink);
 }
 
 .hero-cta-row {
-  margin-top: 38px;
+  margin-top: 28px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .btn-primary-gold {
@@ -492,13 +420,14 @@ button {
   background: rgba(11, 21, 38, 0.03);
 }
 
-/* Right Hero Dossier Card */
+/* Compact Hero Dossier Card inside Right Editorial Column */
 .hero-dossier-card {
+  margin-top: 28px;
   background: var(--navy);
   color: var(--ivory);
-  padding: 28px;
+  padding: 20px 24px;
   border: 1px solid var(--gold);
-  box-shadow: 0 22px 44px rgba(11, 21, 38, 0.12);
+  box-shadow: 0 18px 36px rgba(11, 21, 38, 0.1);
 }
 
 .dossier-header {
@@ -515,17 +444,18 @@ button {
 .dossier-rule {
   height: 1px;
   background: rgba(197, 155, 95, 0.28);
-  margin: 16px 0 20px;
+  margin: 12px 0 14px;
 }
 
 .dossier-list {
   margin: 0;
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 24px;
 }
 
 .dossier-list dt {
-  font-size: 11px;
+  font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: rgba(252, 251, 248, 0.62);
@@ -535,14 +465,14 @@ button {
 .dossier-list dd {
   margin: 0;
   font-family: var(--serif);
-  font-size: 1.24rem;
+  font-size: 1.08rem;
   font-weight: 500;
   color: var(--ivory);
 }
 
 .dossier-footer-note {
-  margin-top: 24px;
-  padding-top: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid rgba(197, 155, 95, 0.24);
   display: flex;
   align-items: center;
@@ -1610,16 +1540,10 @@ button {
    RESPONSIVE BREAKPOINTS
    ========================================================= */
 @media (max-width: 1024px) {
-  .hero-editorial-grid,
   .authority-split-grid,
   .section-header-grid {
     grid-template-columns: 1fr;
     gap: 32px;
-  }
-
-  .hero-portrait-figure {
-    left: 28%;
-    width: min(500px, 64%);
   }
 
   .cases-grid {
@@ -1631,68 +1555,42 @@ button {
   }
 }
 
-@media (max-width: 900px) {
-  .hero-portrait-figure {
-    left: auto;
-    right: -4%;
-    top: 0;
-    bottom: 20%;
-    width: min(440px, 78%);
-    -webkit-mask-image:
-      linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(0, 0, 0, 0.3) 22%,
-        rgba(0, 0, 0, 0.95) 56%,
-        rgba(0, 0, 0, 0.7) 84%,
-        transparent 100%
-      ),
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(0, 0, 0, 0.85) 14%,
-        rgba(0, 0, 0, 0.95) 62%,
-        transparent 100%
-      );
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(0, 0, 0, 0.3) 22%,
-        rgba(0, 0, 0, 0.95) 56%,
-        rgba(0, 0, 0, 0.7) 84%,
-        transparent 100%
-      ),
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(0, 0, 0, 0.85) 14%,
-        rgba(0, 0, 0, 0.95) 62%,
-        transparent 100%
-      );
-    mask-composite: intersect;
+@media (max-width: 960px) {
+  .hero-split-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero-portrait-column {
+    width: 100%;
+    height: 320px;
+    min-height: 320px;
+    background: #090D16;
+  }
+
+  .hero-portrait-frame {
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 66%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 66%, transparent 100%);
   }
 
   .hero-portrait-img {
-    opacity: 0.2;
     object-position: center 16%;
   }
 
-  .hero-copy-protection-veil {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(247, 245, 240, 0.92) 0%,
-        rgba(247, 245, 240, 0.74) 48%,
-        rgba(247, 245, 240, 0.34) 100%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(247, 245, 240, 0.4) 0%,
-        rgba(247, 245, 240, 0.72) 52%,
-        rgba(252, 251, 248, 0.92) 100%
-      );
+  .hero-portrait-bridge {
+    background: linear-gradient(180deg, transparent 58%, #F7F5F0 100%);
+  }
+
+  .hero-content-column {
+    padding: 20px 24px 44px;
+  }
+
+  .hero-content-inner {
+    max-width: 100%;
+  }
+
+  .kinetic-headline-wrap {
+    min-height: auto;
   }
 }
 
@@ -1706,22 +1604,17 @@ button {
     display: none;
   }
 
-  .hero-section {
-    padding: 40px 0 56px;
+  .hero-portrait-column {
+    height: 300px;
+    min-height: 300px;
   }
 
-  .hero-portrait-figure {
-    right: -8%;
-    width: 88%;
-    bottom: 24%;
+  .hero-content-column {
+    padding: 16px 20px 40px;
   }
 
-  .hero-portrait-img {
-    opacity: 0.19;
-  }
-
-  .kinetic-headline-wrap {
-    min-height: auto;
+  .dossier-list {
+    grid-template-columns: 1fr;
   }
 
   .authority-section,
