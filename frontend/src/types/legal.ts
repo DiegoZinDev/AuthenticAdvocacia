@@ -4,7 +4,10 @@ export type PersonaId =
   | 'familia'
   | 'trabalhista'
   | 'previdenciario'
-  | 'consumidor';
+  | 'consumidor'
+  | 'saude'
+  | 'empresarial'
+  | 'criminal';
 
 export interface LawyerProfile {
   id: string;
@@ -62,6 +65,9 @@ export interface PersonaScores {
   trabalhista: number;
   previdenciario: number;
   consumidor: number;
+  saude: number;
+  empresarial: number;
+  criminal: number;
 }
 
 export interface ContextSignal {
@@ -72,13 +78,34 @@ export interface ContextSignal {
     | 'hover'
     | 'scroll'
     | 'dwell'
+    | 'reread'
     | 'selection'
+    | 'copy'
+    | 'device'
+    | 'temporal'
+    | 'cross-intent'
     | 'click'
     | 'simulator';
   detail: string;
   personaId: PersonaId;
   weight: number;
   timestamp: number;
+}
+
+export interface NeuralTelemetrySnapshot {
+  deviceLabel: string;
+  connectionType: string;
+  batteryLabel: string;
+  batteryCritical: boolean;
+  timezone: string;
+  language: string;
+  accessHourLabel: string;
+  urgencyLevel: 'normal' | 'elevada' | 'critica';
+  dwellMs: number;
+  reReadCount: number;
+  scrollVelocityPxSec: number;
+  semanticVectorSummary: string;
+  activeSignalCount: number;
 }
 
 export interface ContextState {
@@ -88,6 +115,8 @@ export interface ContextState {
   confidence: number;
   originSummary: string;
   accessPeriod: string;
+  deductionHeadline: string;
+  telemetry: NeuralTelemetrySnapshot;
   lastSignal: ContextSignal | null;
   signals: ContextSignal[];
   isReturningVisitor: boolean;
@@ -95,12 +124,17 @@ export interface ContextState {
 
 export interface LeadOriginPreset {
   id: string;
-  channel: 'Google' | 'Instagram' | 'Direto';
+  mode: 'direct' | 'cross-intent';
+  channel: 'Google' | 'Instagram' | 'Pista Cruzada' | 'Direto';
   label: string;
   shortLabel: string;
+  deductionLabel: string;
   personaId: PersonaId;
   utmTerm: string;
   utmSource: string;
+  utmMedium: string;
   utmCampaign: string;
   referrerHint: string;
+  expectedScore: number;
+  simulatedTelemetry?: Partial<NeuralTelemetrySnapshot>;
 }

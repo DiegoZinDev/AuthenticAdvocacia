@@ -152,6 +152,9 @@ const PERSONA_TO_BACKEND_SLUG: Record<PersonaId, string> = {
   trabalhista: 'trabalhista',
   previdenciario: 'previdenciario',
   consumidor: 'consumidor',
+  saude: 'saude',
+  empresarial: 'empresarial',
+  criminal: 'criminal',
 };
 
 function mapProfileFromApi(raw: Record<string, unknown>): LawyerProfile {
@@ -164,9 +167,15 @@ function mapProfileFromApi(raw: Record<string, unknown>): LawyerProfile {
         ? 'previdenciario'
         : rawArea.includes('cons')
           ? 'consumidor'
-          : rawArea.includes('imob')
-            ? 'imobiliario'
-            : DEFAULT_LAWYER_PROFILE.primaryArea;
+          : rawArea.includes('saud') || rawArea.includes('med')
+            ? 'saude'
+            : rawArea.includes('empr') || rawArea.includes('soc')
+              ? 'empresarial'
+              : rawArea.includes('crim') || rawArea.includes('penal')
+                ? 'criminal'
+                : rawArea.includes('imob')
+                  ? 'imobiliario'
+                  : DEFAULT_LAWYER_PROFILE.primaryArea;
 
   return {
     ...DEFAULT_LAWYER_PROFILE,
@@ -396,6 +405,9 @@ export async function syncTelemetrySession(payload: {
         trabalhista: payload.scores.trabalhista,
         previdenciario: payload.scores.previdenciario,
         consumidor: payload.scores.consumidor,
+        saude: payload.scores.saude,
+        empresarial: payload.scores.empresarial,
+        criminal: payload.scores.criminal,
       },
     };
     const res = await fetch('/api/telemetry/session', {

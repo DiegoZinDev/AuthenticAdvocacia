@@ -76,22 +76,35 @@ O banco utiliza o módulo nativo **`node:sqlite` (`DatabaseSync`)** com `PRAGMA 
 
 ---
 
-## 4. Hierarquia de Alta Conversão & `PredictiveIntentEngine` ("Estilo TikTok")
+## 4. Neural Context Fusion Engine V2 (25+ Sinais Cruzados em 5 Camadas)
 
-- **Primeira Dobra de Autoridade (`App.tsx`):**
-  - **Badge de Detecção em Tempo Real** acima da Headline principal (`● Contexto identificado: Direito Imobiliário — Distrato & Atraso de Obra`), comunicando imediatamente que a página compreendeu a demanda sem formulário.
-  - **Precedentes na Primeira Dobra (`SuccessCasesSection`):** a seção *"Precedentes & Resultados Documentados — Já resolvemos um caso idêntico ao seu"* foi posicionada imediatamente abaixo da Hero Section, antes do Diagnóstico Jurídico e dos Núcleos de Atuação.
-  - **Coerência 100% por Contexto (Zero Mistura):** cada especialidade ativa exibe exclusivamente **3 casos reais distintos daquela mesma área**, 3 pontos de Diagnóstico Jurídico coerentes, Headline dinâmica e link de WhatsApp pré-preenchido específico. Clicar em qualquer núcleo ou cenário rola suavemente para o topo mostrando a nova versão personalizada.
-- **Serviço Dedicado `PredictiveIntentEngine` (`frontend/src/lib/predictiveIntentEngine.ts`):**
-  1. **Sinais de Entrada:** captura automaticamente `document.referrer`, parâmetros de URL (`utm_term`, `utm_campaign`, `utm_source`, `q`, `tema`, `area`), período/horário de acesso e histórico persistente de visitas anteriores (`document.cookie` + `localStorage` + `IndexedDB`).
-  2. **Rastreamento Comportamental Passivo:** monitora paradas de scroll e tempo de leitura por bloco (`[data-intent-area]` + `IntersectionObserver`), hover prolongado (`>= 550ms`) em núcleos jurídicos e **seleção de texto na página** (`mouseup`/`touchend`), aplicando score ponderado com decaimento temporal até atingir o limiar de confiança e adaptar a página silenciosamente.
+Implementado em `frontend/src/lib/predictiveIntentEngine.ts`, o motor calcula em tempo real uma matriz ponderada de probabilidade sem exigir nenhum formulário e sincroniza a barra de endereço real do navegador via `window.history.replaceState` (`?utm_source=...&utm_medium=...&utm_campaign=...&utm_term=...&ctx_score=...`, removendo hashes soltos como `#autoridade`):
+
+- **Camada A — Inferência Indireta & Semântica (Cross-Intent Deduction):** cruza pistas periféricas sem depender apenas de termos jurídicos óbvios (*"dor nas pernas / coluna / laudo"* + *"55+ / 57 anos / contribuição"* → **Previdenciário / Incapacidade**; *"construtora / chaves / parcela reajustada / multa"* → **Distrato Imobiliário**; *"pix bloqueado / conta invadida / nome sujo"* → **Consumidor & Bancário**; *"02h / madrugada / delegacia / blitz"* → **Urgência Criminal 24h**; *"demissão grávida / PJ com horário fixo"* → **Trabalhista**; *"plano negou cirurgia / home care"* → **Direito Médico**; *"sócio / duplicata / contrato social"* → **Empresarial**).
+- **Camada B — Contexto Temporal & Ambiental:** horário exato (*Madrugada / Plantão 24h*, *Expediente Comercial*, *Plantão Noturno*, *Fim de Semana*), fuso horário e urgência implícita.
+- **Camada C — Telemetria de Dispositivo & Rede:** tipo de aparelho (*iOS Mobile*, *Android Mobile*, *Desktop Corporativo*), velocidade de conexão (`navigator.connection`), nível de bateria (`navigator.getBattery` — bateria crítica + horário noturno elevam o score de urgência) e idioma.
+- **Camada D — Micro-Comportamento na Página (TikTok Dwell Engine):** velocidade de rolagem (`px/s`), detecção de **releitura/hesitação de scroll-up**, tempo de permanência (`dwellMs`), seleção e cópia de trechos jurídicos (`mouseup`, `copy`) e hover prolongado (`>= 550ms`).
+- **Camada E — Memória Persistente Cross-Session:** preserva o vetor acumulado de interesses entre visitas via `document.cookie` + `localStorage` + `IndexedDB`.
+
+### Acervo Jurídico Expandido (8 Núcleos × 3 Precedentes = 24 Casos Reais do DF/Gama)
+1. **Direito Imobiliário** (Atraso de obra, distrato 100%, regularização de escritura no DF)
+2. **Família & Sucessões** (Divórcio litigioso/societário, inventário extrajudicial, pensão)
+3. **Direito Trabalhista** (Pejotização PJ, horas extras/periculosidade, rescisão indireta)
+4. **Previdenciário & INSS** (Aposentadoria por incapacidade/especial, revisão CNIS, auxílio)
+5. **Direito do Consumidor & Bancário** (Golpe do Pix, negativação indevida, descontos RMC)
+6. **Direito Médico & Planos de Saúde** (Liminar 24h cirurgia/prótese, Home Care, oncológico)
+7. **Direito Empresarial & Contratos** (Blindagem societária, execução B2B, revisão de franquia)
+8. **Urgência Criminal & Plantão 24h** (Audiência de custódia, Habeas Corpus liminar, flagrante)
 
 ---
 
-## 5. Motor White-Label & Pílula Flutuante de Demonstração (`Simular Sinal de Busca ▾`)
+## 5. Motor White-Label & Painel Simulador com Telemetria Neural (`Simular Sinal de Busca ▾`)
 
-- **Motor White-Label (`frontend/src/components/WhiteLabelModal.tsx`):** modal discreto no cabeçalho para editar ao vivo nome do advogado(a), OAB, escritório, WhatsApp, cidade, especialidade principal, anos de atuação e foto do titular (Data URL ou monograma).
-- **Pílula Flutuante no Canto Inferior Esquerdo (`frontend/src/components/LeadOriginSimulator.tsx`):** botão discreto **`Simular Sinal de Busca ▾`** com cenários reais de Google e Instagram (*"Busca Google: Construtora atrasou entrega"*, *"Busca Google: Fui demitido como PJ"*, *"Instagram: Partilha de bens no divórcio"*, *"Busca Google: INSS negou aposentadoria"* e *"Busca Google: Nome negativado indevidamente"*). Ao clicar, injeta o sinal no `PredictiveIntentEngine`, atualiza a URL via `history.replaceState`, reescreve a página ao vivo e rola suavemente para o topo.
+- **Motor White-Label (`frontend/src/components/WhiteLabelModal.tsx`):** edita ao vivo nome do titular, OAB, escritório, WhatsApp, cidade, especialidade principal (8 áreas) e foto do advogado.
+- **Pílula Flutuante no Canto Inferior Esquerdo (`frontend/src/components/LeadOriginSimulator.tsx`):**
+  - **Aba 1 — Inferência Indireta (Pistas Cruzadas):** cenários demonstrativos como *"Pesquisou dor nas pernas + 57 anos + horário comercial → Previdenciário (96%)"*, *"Acesso 02h via Celular + Bateria 14% → Plantão 24h (98%)"* e *"Leu 2x cláusula de multa + Desktop corporativo → Distrato Imobiliário (93%)"*.
+  - **Aba 2 — Buscas Diretas (8 Áreas):** alternância instantânea entre todas as 8 especialidades jurídicas com rolagem suave para o topo e sincronização real da URL.
+  - **Mini-Telemetria Neural ao Vivo:** exibe dentro do próprio modal Dispositivo/Rede, Bateria, Horário, Dwell/Releituras/Velocidade, Vetor Semântico e Score de Confiança.
 
 ---
 

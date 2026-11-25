@@ -1018,15 +1018,106 @@ button {
 }
 
 .floating-sim-popover {
-  width: 372px;
+  width: 396px;
   max-width: calc(100vw - 36px);
-  padding: 16px;
+  padding: 15px;
   background: rgba(11, 21, 38, 0.97);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(197, 155, 95, 0.42);
+  border: 1px solid rgba(197, 155, 95, 0.44);
   color: var(--ivory);
-  box-shadow: 0 22px 54px rgba(7, 14, 26, 0.52);
+  box-shadow: 0 24px 56px rgba(7, 14, 26, 0.56);
+}
+
+.floating-sim-popover.is-neural {
+  width: 424px;
+}
+
+.live-context-score {
+  color: var(--gold-deep);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.neural-brain-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 10px;
+  padding: 10px 11px;
+  margin-bottom: 11px;
+  background: rgba(7, 14, 26, 0.72);
+  border: 1px solid rgba(197, 155, 95, 0.22);
+}
+
+.neural-metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  color: rgba(252, 251, 248, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.neural-metric svg {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.neural-metric .is-critical {
+  color: #FCA5A5;
+  font-weight: 600;
+}
+
+.neural-vector-line {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(197, 155, 95, 0.16);
+  font-size: 10.5px;
+  color: rgba(252, 251, 248, 0.74);
+  overflow: hidden;
+}
+
+.neural-vector-line svg {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.neural-vector-line strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.sim-subtabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.sim-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 8px;
+  background: rgba(23, 33, 51, 0.65);
+  border: 1px solid rgba(197, 155, 95, 0.22);
+  color: rgba(252, 251, 248, 0.74);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.sim-subtab-btn.is-active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
 }
 
 .floating-sim-head {
@@ -1053,7 +1144,7 @@ button {
 .floating-sim-conf {
   font-size: 11px;
   font-weight: 600;
-  color: rgba(252, 251, 248, 0.78);
+  color: rgba(252, 251, 248, 0.85);
 }
 
 .floating-sim-desc {
@@ -1067,6 +1158,12 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.floating-sim-list.is-scrollable {
+  max-height: 245px;
+  overflow-y: auto;
+  padding-right: 2px;
 }
 
 .floating-sim-option {
@@ -1107,30 +1204,32 @@ button {
 }
 
 .floating-sim-opt-label {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--ivory);
+  line-height: 1.28;
+}
+
+.floating-sim-opt-deduction {
+  font-size: 11px;
+  color: var(--gold);
   line-height: 1.25;
 }
 
-.floating-sim-opt-meta {
-  font-size: 10.5px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: rgba(197, 155, 95, 0.88);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .floating-sim-telemetry {
-  margin-top: 12px;
-  padding-top: 10px;
+  margin-top: 10px;
+  padding-top: 9px;
   border-top: 1px solid rgba(197, 155, 95, 0.2);
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
-  color: rgba(252, 251, 248, 0.72);
+  font-size: 10.5px;
+  color: rgba(252, 251, 248, 0.74);
+}
+
+.floating-sim-telemetry code {
+  color: var(--gold);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 .floating-sim-telemetry svg {

@@ -241,7 +241,12 @@ export function App() {
                 >
                   <span className="live-context-dot" aria-hidden="true" />
                   <span className="live-context-label">
-                    Contexto identificado: <strong>{activePersonaContent.badgeSubtitle}</strong>
+                    Contexto identificado:{' '}
+                    <strong>{activePersonaContent.badgeSubtitle}</strong>
+                    <span className="live-context-score">
+                      {' '}
+                      • {Math.round(contextState.confidence * 100)}%
+                    </span>
                   </span>
                 </motion.div>
               </AnimatePresence>

@@ -1,7 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Activity, ChevronDown, ChevronUp, Radio, Search } from 'lucide-react';
-import { LEAD_ORIGIN_PRESETS, PERSONA_CONTENTS } from '../data/seeds';
+import {
+  Activity,
+  BatteryCharging,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Cpu,
+  Radio,
+  Search,
+  Smartphone,
+  Sparkles,
+} from 'lucide-react';
+import {
+  CROSS_INTENT_PRESETS,
+  LEAD_ORIGIN_PRESETS,
+  PERSONA_CONTENTS,
+} from '../data/seeds';
 import type { ContextState, LeadOriginPreset } from '../types/legal';
 
 interface LeadOriginSimulatorProps {
@@ -9,11 +24,13 @@ interface LeadOriginSimulatorProps {
   onSimulate: (preset: LeadOriginPreset) => void;
 }
 
+type SimulatorTab = 'cross-intent' | 'direct';
+
 export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimulatorProps) {
   const [expanded, setExpanded] = useState(false);
+  const [tab, setTab] = useState<SimulatorTab>('cross-intent');
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Close popover when clicking outside
   useEffect(() => {
     if (!expanded) return;
     const handleOutside = (e: MouseEvent) => {
@@ -26,12 +43,14 @@ export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimu
   }, [expanded]);
 
   const activePersonaLabel = PERSONA_CONTENTS[contextState.activePersona].areaLabel;
+  const t = contextState.telemetry;
+  const presets = tab === 'cross-intent' ? CROSS_INTENT_PRESETS : LEAD_ORIGIN_PRESETS;
 
   return (
     <div
       ref={containerRef}
       className="floating-sim-wrapper"
-      aria-label="Simulador de Sinal de Busca (Demonstração Presencial)"
+      aria-label="Simulador de Sinal de Busca — Neural Context Fusion Engine"
     >
       <AnimatePresence>
         {expanded && (
@@ -41,28 +60,82 @@ export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimu
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.97 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="floating-sim-popover"
+            className="floating-sim-popover is-neural"
             role="dialog"
-            aria-label="Cenários de busca para demonstração"
+            aria-label="Neural Context Fusion Engine — Cenários de Demonstração"
           >
             <div className="floating-sim-head">
               <div className="floating-sim-title">
                 <Radio size={13} strokeWidth={1.8} aria-hidden="true" />
-                <span>PredictiveIntentEngine • Demo em Campo</span>
+                <span>Neural Context Fusion • 25+ Sinais</span>
               </div>
               <span className="floating-sim-conf">
                 {Math.round(contextState.confidence * 100)}% confiança
               </span>
             </div>
 
-            <p className="floating-sim-desc">
-              Injete um sinal real de busca (Google ou Instagram) para ver a página inteira se
-              reescrever ao vivo sem nenhum formulário.
-            </p>
+            {/* Live Brain Mini-Telemetry Matrix */}
+            <div className="neural-brain-grid" aria-label="Telemetria em tempo real">
+              <div className="neural-metric">
+                <Smartphone size={11} strokeWidth={1.7} aria-hidden="true" />
+                <span>
+                  {t.deviceLabel} • {t.connectionType}
+                </span>
+              </div>
+              <div className="neural-metric">
+                <BatteryCharging size={11} strokeWidth={1.7} aria-hidden="true" />
+                <span className={t.batteryCritical ? 'is-critical' : ''}>
+                  Bat. {t.batteryLabel}
+                </span>
+              </div>
+              <div className="neural-metric">
+                <Clock size={11} strokeWidth={1.7} aria-hidden="true" />
+                <span>{t.accessHourLabel}</span>
+              </div>
+              <div className="neural-metric">
+                <Activity size={11} strokeWidth={1.7} aria-hidden="true" />
+                <span>
+                  Dwell {(t.dwellMs / 1000).toFixed(1)}s • {t.reReadCount}x releit. •{' '}
+                  {t.scrollVelocityPxSec}px/s
+                </span>
+              </div>
+              <div className="neural-vector-line">
+                <Cpu size={11} strokeWidth={1.7} aria-hidden="true" />
+                <span>
+                  Vetor: <strong>{t.semanticVectorSummary}</strong>
+                </span>
+              </div>
+            </div>
 
-            <div className="floating-sim-list">
-              {LEAD_ORIGIN_PRESETS.map((preset) => {
-                const isSelected = contextState.activePersona === preset.personaId;
+            {/* 2 Clean Sub-Tabs: Cross-Intent Clues vs 8 Direct Search Areas */}
+            <div className="sim-subtabs" role="tablist">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === 'cross-intent'}
+                className={`sim-subtab-btn ${tab === 'cross-intent' ? 'is-active' : ''}`}
+                onClick={() => setTab('cross-intent')}
+              >
+                <Sparkles size={11} strokeWidth={1.8} aria-hidden="true" />
+                <span>Inferência Indireta (Pistas)</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === 'direct'}
+                className={`sim-subtab-btn ${tab === 'direct' ? 'is-active' : ''}`}
+                onClick={() => setTab('direct')}
+              >
+                <Search size={11} strokeWidth={1.8} aria-hidden="true" />
+                <span>Buscas Diretas (8 Áreas)</span>
+              </button>
+            </div>
+
+            <div className="floating-sim-list is-scrollable">
+              {presets.map((preset) => {
+                const isSelected =
+                  contextState.activePersona === preset.personaId &&
+                  contextState.originSummary === preset.label;
                 return (
                   <button
                     key={preset.id}
@@ -73,12 +146,14 @@ export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimu
                       setExpanded(false);
                     }}
                   >
-                    <Search size={13} strokeWidth={1.7} aria-hidden="true" />
+                    {preset.mode === 'cross-intent' ? (
+                      <Sparkles size={13} strokeWidth={1.7} aria-hidden="true" />
+                    ) : (
+                      <Search size={13} strokeWidth={1.7} aria-hidden="true" />
+                    )}
                     <div className="floating-sim-opt-copy">
                       <span className="floating-sim-opt-label">{preset.label}</span>
-                      <span className="floating-sim-opt-meta">
-                        ?utm_source={preset.utmSource}&amp;utm_term={preset.utmTerm}
-                      </span>
+                      <span className="floating-sim-opt-deduction">{preset.deductionLabel}</span>
                     </div>
                   </button>
                 );
@@ -88,8 +163,8 @@ export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimu
             <div className="floating-sim-telemetry">
               <Activity size={12} strokeWidth={1.7} aria-hidden="true" />
               <span>
-                Ativo: <strong>{activePersonaLabel}</strong>
-                {contextState.lastSignal ? ` • ${contextState.lastSignal.detail}` : ''}
+                Núcleo ativo: <strong>{activePersonaLabel}</strong> • URL sincronizada com{' '}
+                <code>ctx_score={Math.round(contextState.confidence * 100)}</code>
               </span>
             </div>
           </motion.div>
