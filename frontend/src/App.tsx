@@ -61,8 +61,13 @@ export function App() {
     getLocalCasesStrictlyForPersona(engineRef.current!.getState().activePersona)
   );
   const [whiteLabelOpen, setWhiteLabelOpen] = useState(false);
+  const [heroPortraitFallback, setHeroPortraitFallback] = useState(false);
 
   const sectionTimerRef = useRef<Record<string, number>>({});
+
+  useEffect(() => {
+    setHeroPortraitFallback(false);
+  }, [profile.photoUrl]);
 
   // Subscribe to PredictiveIntentEngine + start passive TikTok-style listeners
   useEffect(() => {
@@ -119,6 +124,12 @@ export function App() {
     () => buildWhatsappUrl(profile.whatsapp, profile.lawyerName, contextState.activePersona),
     [profile.whatsapp, profile.lawyerName, contextState.activePersona]
   );
+
+  const heroPortraitSrc = useMemo(() => {
+    if (heroPortraitFallback) return '/lawyer-portrait.png';
+    const trimmed = profile.photoUrl?.trim();
+    return trimmed && trimmed.length > 0 ? trimmed : '/lawyer-portrait.png';
+  }, [heroPortraitFallback, profile.photoUrl]);
 
   // Clicking a Practice Area immediately rewrites global state and smoothly scrolls to top;
   // hovering feeds passive dwell scoring into PredictiveIntentEngine
@@ -226,6 +237,32 @@ export function App() {
       <main id="topo">
         {/* Hero Editorial Section with Live Context Detection Badge */}
         <section className="hero-section" data-intent-area={contextState.activePersona}>
+          <div className="hero-portrait-backdrop" aria-hidden="true">
+            <div className="hero-portrait-stage">
+              <motion.div
+                key={heroPortraitSrc}
+                className="hero-portrait-figure"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <img
+                  src={heroPortraitSrc}
+                  alt=""
+                  className="hero-portrait-img"
+                  decoding="async"
+                  onError={() => {
+                    if (heroPortraitSrc !== '/lawyer-portrait.png') {
+                      setHeroPortraitFallback(true);
+                    }
+                  }}
+                />
+                <div className="hero-portrait-veil" />
+              </motion.div>
+              <div className="hero-copy-protection-veil" />
+            </div>
+          </div>
+
           <div className="editorial-container">
             <div className="hero-meta-bar">
               <AnimatePresence mode="wait">
