@@ -25,6 +25,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
   geral: {
     id: 'geral',
     areaLabel: 'Advocacia Estratégica',
+    badgeSubtitle: 'Advocacia Estratégica — Proteção Patrimonial & Contencioso DF',
     eyebrow: 'Atuação Contenciosa e Consultiva no Distrito Federal',
     headline: 'Defesa jurídica técnica para proteger seu patrimônio, sua família e seus direitos.',
     subheadline:
@@ -57,6 +58,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
   imobiliario: {
     id: 'imobiliario',
     areaLabel: 'Direito Imobiliário',
+    badgeSubtitle: 'Direito Imobiliário — Distrato & Atraso de Obra',
     eyebrow: 'Imóveis na Planta, Distrato, Posse & Regularização no DF',
     headline: 'Recupere valores retidos pela construtora e proteja seu patrimônio imobiliário.',
     subheadline:
@@ -89,6 +91,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
       'distrato',
       'construtora',
       'atraso',
+      'entrega',
       'obra',
       'usucapiao',
       'escritura',
@@ -96,12 +99,14 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
       'incorporadora',
       'terreno',
       'lote',
+      'planta',
     ],
     courtFocus: 'TJDFT • Varas Cíveis & STJ',
   },
   familia: {
     id: 'familia',
     areaLabel: 'Família e Sucessões',
+    badgeSubtitle: 'Família & Sucessões — Divórcio, Partilha & Inventário',
     eyebrow: 'Divórcio, Partilha de Bens, Guarda & Inventário Reservado',
     headline: 'Conduza seu divórcio ou inventário com discrição absoluta e proteção patrimonial.',
     subheadline:
@@ -132,6 +137,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
       'divorcio',
       'familia',
       'partilha',
+      'bens',
       'pensao',
       'alimentos',
       'guarda',
@@ -146,6 +152,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
   trabalhista: {
     id: 'trabalhista',
     areaLabel: 'Direito Trabalhista',
+    badgeSubtitle: 'Direito Trabalhista — Vínculo PJ, Horas Extras & Rescisão',
     eyebrow: 'Rescisão, Horas Extras, Vínculo PJ & Assédio no TRT-10',
     headline: 'Assegure integralmente suas verbas rescisórias, horas extras e reparação trabalhista.',
     subheadline:
@@ -170,16 +177,18 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
       },
     ],
     whatsappPrefill:
-      'Olá, Dr. Henrique. Preciso analisar meus direitos trabalhistas (rescisão, horas extras ou reconhecimento de vínculo).',
+      'Olá, Dr. Henrique. Preciso analisar meus direitos trabalhistas (rescisão, horas extras ou reconhecimento de vínculo PJ).',
     ctaLabel: 'Calcular e Analisar Meus Direitos',
     keywords: [
       'trabalhista',
       'rescisao',
       'demissao',
+      'demitido',
       'fgts',
       'horas',
       'extras',
       'pj',
+      'pejotizacao',
       'vinculo',
       'assedio',
       'justa',
@@ -191,6 +200,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
   previdenciario: {
     id: 'previdenciario',
     areaLabel: 'Direito Previdenciário',
+    badgeSubtitle: 'Direito Previdenciário — INSS, Revisão & Aposentadoria',
     eyebrow: 'Aposentadorias, Revisões & Benefícios Negados pelo INSS',
     headline: 'Reverta negativas do INSS e conquiste o melhor valor possível de aposentadoria.',
     subheadline:
@@ -223,6 +233,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
       'previdenciario',
       'revisao',
       'beneficio',
+      'negou',
       'loas',
       'bpc',
       'auxilio',
@@ -235,6 +246,7 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
   consumidor: {
     id: 'consumidor',
     areaLabel: 'Direito do Consumidor',
+    badgeSubtitle: 'Direito do Consumidor — Negativação, Bancos & Saúde',
     eyebrow: 'Negativação Indevida, Bancos, Planos de Saúde & Aéreos',
     headline: 'Exija reparação imediata contra abusos bancários, negativações e negativas de saúde.',
     subheadline:
@@ -280,47 +292,47 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
 };
 
 export const LEGAL_CASES: LegalCase[] = [
-  // IMOBILIÁRIO (3 casos)
+  // IMOBILIÁRIO (3 casos distintos exclusivos de Direito Imobiliário no DF)
   {
     id: 'imob-1',
     personaId: 'imobiliario',
     courtRef: 'TJDFT — 3ª Turma Cível',
     processHint: 'Águas Claras / DF',
-    title: 'Rescisão por atraso de 11 meses com restituição de 100% e lucros cessantes',
+    title: 'Atraso na entrega de imóvel na planta com lucros cessantes e congelamento do INCC',
     situation:
-      'Compradora adquiriu unidade residencial na planta e sofreu atraso de quase um ano além do prazo contratual de tolerância, tendo o pedido de distrato negado com proposta de retenção de 50%.',
+      'Comprador aguardou 11 meses além do prazo contratual de tolerância de 180 dias enquanto a construtora seguia reajustando o saldo devedor pelo INCC sem entregar as chaves.',
     strategyAndOutcome:
-      'Demonstramos mora exclusiva da incorporadora e afastamos a cláusula de retenção. O TJDFT decretou resolução contratual com devolução integral corrigida pelo INCC/IPCA e aluguel mensal pelo período de atraso.',
-    metricBadge: 'R$ 194.600 restituídos',
-    timeframe: '7 meses até acórdão',
+      'Demonstramos mora exclusiva da incorporadora. O TJDFT congelou o saldo devedor desde o vencimento do prazo, fixou aluguel mensal retroativo por todo o atraso e deferiu danos morais.',
+    metricBadge: 'R$ 74.800 em lucros cessantes',
+    timeframe: '6 meses até sentença',
     displayOrder: 1,
   },
   {
     id: 'imob-2',
     personaId: 'imobiliario',
-    courtRef: 'TJDFT — 1ª Vara Cível do Gama',
-    processHint: 'Setor Central — Gama/DF',
-    title: 'Adjudicação compulsória de imóvel quitado sem outorga de escritura',
+    courtRef: 'TJDFT — 6ª Turma Cível',
+    processHint: 'Noroeste / Brasília-DF',
+    title: 'Distrato imobiliário com devolução de 100% dos valores pagos e afastamento de multa',
     situation:
-      'Família possuía contrato de gaveta quitado há 9 anos, porém a antiga proprietária havia se mudado para outro estado e recusava-se a assinar a escritura pública definitiva.',
+      'Adquirente precisou rescindir o contrato após descumprimento do memorial descritivo e atraso na obra, mas a incorporadora exigia retenção abusiva de 50% do capital investido.',
     strategyAndOutcome:
-      'Reunimos cadeia completa de recibos, comprovantes de IPTU e quitação bancária. A sentença substituiu a declaração de vontade da vendedora e determinou registro direto no Cartório do 5º Ofício do DF.',
-    metricBadge: 'Matrícula regularizada',
-    timeframe: '5 meses em 1º grau',
+      'Aplicamos a Súmula 543 do STJ comprovando culpa contratual da vendedora. A sentença anulou a cláusula penal e ordenou restituição integral em parcela única corrigida pelo IPCA.',
+    metricBadge: 'R$ 194.600 restituídos (100%)',
+    timeframe: '7 meses até acórdão',
     displayOrder: 2,
   },
   {
     id: 'imob-3',
     personaId: 'imobiliario',
-    courtRef: 'TJDFT — 6ª Turma Cível',
-    processHint: 'Noroeste / Brasília-DF',
-    title: 'Reparação integral por vícios construtivos e infiltração estrutural em cobertura',
+    courtRef: 'TJDFT — 1ª Vara Cível do Gama',
+    processHint: 'Setor Central — Gama/DF',
+    title: 'Regularização de escritura e posse definitiva via adjudicação compulsória no DF',
     situation:
-      'Imóvel entregue com infiltrações recorrentes em laje e esquadrias defeituosas, sem solução efetiva pela assistência técnica da construtora após sucessivos protocolos.',
+      'Família possuía contrato de gaveta quitado há 9 anos, porém a antiga proprietária havia se mudado para outro estado e recusava-se a outorgar a escritura pública definitiva.',
     strategyAndOutcome:
-      'Produzimos prova pericial de engenharia civil ainda em tutela antecipada de evidência, condenando a construtora ao custeio integral da obra reparadora e danos morais.',
-    metricBadge: 'R$ 86.400 + reparo integral',
-    timeframe: '9 meses até cumprimento',
+      'Reunimos cadeia completa de recibos, comprovantes de IPTU e quitação bancária. A sentença substituiu a assinatura da vendedora e determinou registro direto no Cartório do 5º Ofício do DF.',
+    metricBadge: 'Matrícula e escritura registradas',
+    timeframe: '5 meses em 1º grau',
     displayOrder: 3,
   },
 
@@ -547,64 +559,59 @@ export const LEGAL_CASES: LegalCase[] = [
 
 export const LEAD_ORIGIN_PRESETS: LeadOriginPreset[] = [
   {
-    id: 'preset-geral',
-    label: 'Orgânico / Direto',
-    shortLabel: 'Orgânico / Direto',
-    personaId: 'geral',
-    utmTerm: '',
-    utmSource: 'direct',
-    utmCampaign: 'institucional',
-    referrerHint: 'acesso-direto',
-  },
-  {
     id: 'preset-imobiliario',
-    label: 'Busca: Imóvel / Distrato',
-    shortLabel: 'Imóvel / Distrato',
+    channel: 'Google',
+    label: 'Busca Google: Construtora atrasou entrega',
+    shortLabel: 'Construtora atrasou entrega',
     personaId: 'imobiliario',
-    utmTerm: 'distrato-imovel',
+    utmTerm: 'construtora-atrasou-entrega-imovel',
     utmSource: 'google',
     utmCampaign: 'busca-imobiliario-df',
-    referrerHint: 'google.com.br/search?q=distrato+imovel+df',
-  },
-  {
-    id: 'preset-familia',
-    label: 'Busca: Divórcio & Família',
-    shortLabel: 'Divórcio & Família',
-    personaId: 'familia',
-    utmTerm: 'divorcio-partilha',
-    utmSource: 'google',
-    utmCampaign: 'familia-sucessoes-df',
-    referrerHint: 'google.com.br/search?q=advogado+divorcio+partilha+df',
+    referrerHint: 'google.com.br/search?q=construtora+atrasou+entrega+imovel',
   },
   {
     id: 'preset-trabalhista',
-    label: 'Busca: Trabalhista',
-    shortLabel: 'Trabalhista',
+    channel: 'Google',
+    label: 'Busca Google: Fui demitido como PJ',
+    shortLabel: 'Fui demitido como PJ',
     personaId: 'trabalhista',
-    utmTerm: 'rescisao-trabalhista',
+    utmTerm: 'fui-demitido-como-pj-vinculo',
     utmSource: 'google',
     utmCampaign: 'trt10-trabalhista',
-    referrerHint: 'google.com.br/search?q=rescisao+trabalhista+horas+extras',
+    referrerHint: 'google.com.br/search?q=fui+demitido+como+pj+direitos',
+  },
+  {
+    id: 'preset-familia',
+    channel: 'Instagram',
+    label: 'Instagram: Partilha de bens no divórcio',
+    shortLabel: 'Partilha de bens no divórcio',
+    personaId: 'familia',
+    utmTerm: 'partilha-de-bens-no-divorcio',
+    utmSource: 'instagram',
+    utmCampaign: 'familia-sucessoes-df',
+    referrerHint: 'instagram.com/ad/partilha-divorcio-df',
   },
   {
     id: 'preset-previdenciario',
-    label: 'Busca: Aposentadoria / INSS',
-    shortLabel: 'Aposentadoria / INSS',
+    channel: 'Google',
+    label: 'Busca Google: INSS negou aposentadoria',
+    shortLabel: 'INSS negou aposentadoria',
     personaId: 'previdenciario',
-    utmTerm: 'revisao-inss',
+    utmTerm: 'inss-negou-aposentadoria-revisao',
     utmSource: 'google',
     utmCampaign: 'inss-aposentadoria-df',
-    referrerHint: 'google.com.br/search?q=revisao+aposentadoria+inss',
+    referrerHint: 'google.com.br/search?q=inss+negou+aposentadoria+recurso',
   },
   {
     id: 'preset-consumidor',
-    label: 'Busca: Consumidor / Indenização',
-    shortLabel: 'Consumidor / Indenização',
+    channel: 'Google',
+    label: 'Busca Google: Nome negativado indevidamente',
+    shortLabel: 'Nome negativado indevidamente',
     personaId: 'consumidor',
-    utmTerm: 'negativacao-indevida',
+    utmTerm: 'nome-negativado-indevidamente-serasa',
     utmSource: 'google',
     utmCampaign: 'consumidor-urgencia',
-    referrerHint: 'google.com.br/search?q=negativacao+indevida+indenizacao',
+    referrerHint: 'google.com.br/search?q=nome+negativado+indevidamente+liminar',
   },
 ];
 

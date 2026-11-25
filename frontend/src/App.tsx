@@ -10,11 +10,9 @@ import {
 } from 'lucide-react';
 import { DEFAULT_LAWYER_PROFILE, LEGAL_CASES, PERSONA_CONTENTS } from './data/seeds';
 import {
-  applyBehavioralSignal,
-  applySimulatedOrigin,
+  PredictiveIntentEngine,
   buildWhatsappUrl,
-  initializeContextEngine,
-} from './lib/contextEngine';
+} from './lib/predictiveIntentEngine';
 import {
   getCasesForPersona,
   loadProfileWithFallback,
@@ -35,74 +33,80 @@ import { AuthorityPainSection } from './components/AuthorityPainSection';
 import { WhiteLabelModal } from './components/WhiteLabelModal';
 import { LeadOriginSimulator } from './components/LeadOriginSimulator';
 
-function createInitialContextSync(): ContextState {
-  return {
-    sessionId: 'init',
-    activePersona: 'geral',
-    scores: {
-      geral: 10,
-      imobiliario: 0,
-      familia: 0,
-      trabalhista: 0,
-      previdenciario: 0,
-      consumidor: 0,
-    },
-    confidence: 0.65,
-    originSummary: 'Acesso Direto • Distrito Federal',
-    lastSignal: null,
-    signals: [],
-    isReturningVisitor: false,
-  };
+function getLocalCasesStrictlyForPersona(personaId: PersonaId): LegalCase[] {
+  const target: PersonaId = personaId === 'geral' ? 'imobiliario' : personaId;
+  return LEGAL_CASES.filter((item) => item.personaId === target)
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .slice(0, 3);
+}
+
+function scrollSmoothToTop(): void {
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 export function App() {
+  const engineRef = useRef<PredictiveIntentEngine | null>(null);
+  if (!engineRef.current) {
+    engineRef.current = new PredictiveIntentEngine(DEFAULT_LAWYER_PROFILE.primaryArea);
+  }
+
   const [profile, setProfile] = useState<LawyerProfile>(DEFAULT_LAWYER_PROFILE);
   const [isOfflineFallback, setIsOfflineFallback] = useState<boolean>(false);
-  const [contextState, setContextState] = useState<ContextState>(createInitialContextSync);
+  const [contextState, setContextState] = useState<ContextState>(() =>
+    engineRef.current!.getState()
+  );
   const [cases, setCases] = useState<LegalCase[]>(() =>
-    LEGAL_CASES.filter((c) => c.personaId === 'geral').slice(0, 3)
+    getLocalCasesStrictlyForPersona(engineRef.current!.getState().activePersona)
   );
   const [whiteLabelOpen, setWhiteLabelOpen] = useState(false);
 
   const sectionTimerRef = useRef<Record<string, number>>({});
 
-  // Bootstrap Profile + 3-Layer Silent Contextual Adaptation Engine
+  // Subscribe to PredictiveIntentEngine + start passive TikTok-style listeners
   useEffect(() => {
+    const engine = engineRef.current!;
+    const unsubscribe = engine.subscribe((nextState) => {
+      setContextState(nextState);
+    });
+    engine.startPassiveListeners();
+
     let mounted = true;
-
     async function bootstrap() {
-      const [profileResult, initialCtx] = await Promise.all([
-        loadProfileWithFallback(),
-        initializeContextEngine(),
-      ]);
-
+      const profileResult = await loadProfileWithFallback();
       if (!mounted) return;
       setProfile(profileResult.profile);
       setIsOfflineFallback(profileResult.source === 'offline');
-      setContextState(initialCtx);
-
-      const initialCases = await getCasesForPersona(initialCtx.activePersona);
-      if (mounted) {
-        setCases(initialCases);
-      }
+      await engine.bootstrap(profileResult.profile.primaryArea);
     }
 
     void bootstrap();
+
     return () => {
       mounted = false;
+      unsubscribe();
+      engine.stopPassiveListeners();
     };
   }, []);
 
-  // Load matching TJDFT/TRT-10/TRF-1 cases whenever activePersona changes
+  // Synchronously guarantee 100% coherent cases for the active persona (zero mixing!)
+  // then optionally hydrate from backend API if reachable and strictly matching
   useEffect(() => {
-    let active = true;
-    void getCasesForPersona(contextState.activePersona).then((nextCases) => {
-      if (active) {
-        setCases(nextCases);
+    const targetPersona = contextState.activePersona;
+    setCases(getLocalCasesStrictlyForPersona(targetPersona));
+
+    let current = true;
+    void getCasesForPersona(targetPersona).then((remoteCases) => {
+      if (!current) return;
+      const strictlyMatched = remoteCases.filter((c) => c.personaId === targetPersona);
+      if (strictlyMatched.length === 3) {
+        setCases(strictlyMatched);
       }
     });
+
     return () => {
-      active = false;
+      current = false;
     };
   }, [contextState.activePersona]);
 
@@ -116,41 +120,47 @@ export function App() {
     [profile.whatsapp, profile.lawyerName, contextState.activePersona]
   );
 
-  // Layer 3: Live behavioral tracking for practice area hover/click
+  // Clicking a Practice Area immediately rewrites global state and smoothly scrolls to top;
+  // hovering feeds passive dwell scoring into PredictiveIntentEngine
   const handleSelectPracticeArea = useCallback(
     (area: PersonaId, source: 'hover' | 'click') => {
-      setContextState((prev) =>
-        applyBehavioralSignal(prev, {
-          source,
-          personaId: area,
-          weight: source === 'click' ? 55 : 28,
-          detail:
-            source === 'click'
-              ? `Seleção direta em ${PERSONA_CONTENTS[area].areaLabel}`
-              : `Leitura prolongada (>=650ms) em ${PERSONA_CONTENTS[area].areaLabel}`,
-        })
-      );
+      const engine = engineRef.current!;
+      if (source === 'click') {
+        engine.selectAreaDirectly(
+          area,
+          `Núcleo selecionado: ${PERSONA_CONTENTS[area].areaLabel}`
+        );
+        scrollSmoothToTop();
+        return;
+      }
+
+      engine.recordPassiveSignal({
+        source: 'hover',
+        personaId: area,
+        weight: 30,
+        detail: `Interesse prolongado em ${PERSONA_CONTENTS[area].areaLabel}`,
+      });
     },
     []
   );
 
-  // Layer 3: IntersectionObserver / reading dwell time signal
+  // Section reading dwell signal
   const handleSectionVisible = useCallback((persona: PersonaId) => {
     if (sectionTimerRef.current[persona]) return;
     sectionTimerRef.current[persona] = window.setTimeout(() => {
-      setContextState((prev) =>
-        applyBehavioralSignal(prev, {
-          source: 'scroll',
-          personaId: prev.activePersona,
-          weight: 8,
-          detail: `Tempo de leitura aprofundada (${PERSONA_CONTENTS[prev.activePersona].areaLabel})`,
-        })
-      );
-    }, 3500);
+      engineRef.current?.recordPassiveSignal({
+        source: 'scroll',
+        personaId: persona,
+        weight: 10,
+        detail: `Leitura aprofundada (${PERSONA_CONTENTS[persona].areaLabel})`,
+      });
+    }, 3200);
   }, []);
 
+  // Discreet bottom-left simulator injects search signal + scrolls smoothly to top
   const handleSimulateOrigin = useCallback((preset: LeadOriginPreset) => {
-    setContextState((prev) => applySimulatedOrigin(prev, preset));
+    engineRef.current?.injectSimulatedSearch(preset);
+    scrollSmoothToTop();
   }, []);
 
   const handleSaveProfile = useCallback(async (nextProfile: LawyerProfile) => {
@@ -184,9 +194,9 @@ export function App() {
           </a>
 
           <nav className="masthead-nav" aria-label="Navegação principal">
-            <a href="#autoridade">Diagnóstico</a>
             <a href="#casos-resolvidos">Casos Resolvidos</a>
-            <a href="#areas-atuacao">Especialidades</a>
+            <a href="#autoridade">Diagnóstico</a>
+            <a href="#areas-atuacao">Núcleos</a>
           </nav>
 
           <div className="masthead-actions">
@@ -214,26 +224,33 @@ export function App() {
       </header>
 
       <main id="topo">
-        {/* Hero Editorial Section */}
-        <section className="hero-section">
+        {/* Hero Editorial Section with Live Context Detection Badge */}
+        <section className="hero-section" data-intent-area={contextState.activePersona}>
           <div className="editorial-container">
             <div className="hero-meta-bar">
               <AnimatePresence mode="wait">
-                <motion.span
-                  key={`eyebrow-${contextState.activePersona}`}
-                  className="hero-eyebrow"
-                  initial={{ opacity: 0, y: 6 }}
+                <motion.div
+                  key={`ctx-badge-${contextState.activePersona}-${contextState.originSummary}`}
+                  className="live-context-badge"
+                  initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.3 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.28 }}
+                  role="status"
+                  aria-live="polite"
                 >
-                  {activePersonaContent.eyebrow}
-                </motion.span>
+                  <span className="live-context-dot" aria-hidden="true" />
+                  <span className="live-context-label">
+                    Contexto identificado: <strong>{activePersonaContent.badgeSubtitle}</strong>
+                  </span>
+                </motion.div>
               </AnimatePresence>
 
               <span className="hero-jurisdiction-tag">
                 <MapPin size={13} strokeWidth={1.6} aria-hidden="true" />
-                <span>{profile.city}</span>
+                <span>
+                  {profile.city} • {contextState.accessPeriod}
+                </span>
               </span>
             </div>
 
@@ -279,7 +296,7 @@ export function App() {
                     <dd>{profile.oabNumber}</dd>
                   </div>
                   <div>
-                    <dt>Foco Atual</dt>
+                    <dt>Foco em Tempo Real</dt>
                     <dd>{activePersonaContent.areaLabel}</dd>
                   </div>
                   <div>
@@ -296,18 +313,18 @@ export function App() {
           </div>
         </section>
 
-        {/* Contextual Pain Points & Lawyer Authority Portrait */}
-        <AuthorityPainSection
-          profile={profile}
+        {/* FIRST FOLD PRIORITY: Precedents & Documented Results IMMEDIATELY below Hero */}
+        <SuccessCasesSection
           personaId={contextState.activePersona}
+          cases={cases}
           whatsappUrl={whatsappUrl}
           onSectionVisible={handleSectionVisible}
         />
 
-        {/* Shared-State Transitions: Success Cases Section */}
-        <SuccessCasesSection
+        {/* Contextual Pain Points & Lawyer Authority Portrait */}
+        <AuthorityPainSection
+          profile={profile}
           personaId={contextState.activePersona}
-          cases={cases}
           whatsappUrl={whatsappUrl}
           onSectionVisible={handleSectionVisible}
         />
@@ -319,7 +336,7 @@ export function App() {
         />
       </main>
 
-      {/* Editorial Footer + Discreet Lead Origin Simulator */}
+      {/* Editorial Footer */}
       <footer className="editorial-footer">
         <div className="editorial-container footer-main-grid">
           <div>
@@ -336,9 +353,10 @@ export function App() {
             </p>
           </div>
         </div>
-
-        <LeadOriginSimulator contextState={contextState} onSimulate={handleSimulateOrigin} />
       </footer>
+
+      {/* Discreet Floating Bottom-Left Field Demo Pill */}
+      <LeadOriginSimulator contextState={contextState} onSimulate={handleSimulateOrigin} />
 
       <WhiteLabelModal
         isOpen={whiteLabelOpen}

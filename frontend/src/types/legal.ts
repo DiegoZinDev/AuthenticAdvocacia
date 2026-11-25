@@ -29,6 +29,7 @@ export interface PersonaPainPoint {
 export interface PersonaContent {
   id: PersonaId;
   areaLabel: string;
+  badgeSubtitle: string;
   eyebrow: string;
   headline: string;
   subheadline: string;
@@ -64,7 +65,16 @@ export interface PersonaScores {
 }
 
 export interface ContextSignal {
-  source: 'url' | 'referrer' | 'cookie' | 'hover' | 'scroll' | 'click' | 'simulator';
+  source:
+    | 'url'
+    | 'referrer'
+    | 'cookie'
+    | 'hover'
+    | 'scroll'
+    | 'dwell'
+    | 'selection'
+    | 'click'
+    | 'simulator';
   detail: string;
   personaId: PersonaId;
   weight: number;
@@ -77,6 +87,7 @@ export interface ContextState {
   scores: PersonaScores;
   confidence: number;
   originSummary: string;
+  accessPeriod: string;
   lastSignal: ContextSignal | null;
   signals: ContextSignal[];
   isReturningVisitor: boolean;
@@ -84,6 +95,7 @@ export interface ContextState {
 
 export interface LeadOriginPreset {
   id: string;
+  channel: 'Google' | 'Instagram' | 'Direto';
   label: string;
   shortLabel: string;
   personaId: PersonaId;

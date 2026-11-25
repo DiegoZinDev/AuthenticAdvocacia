@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Compass, ChevronUp, ChevronDown, Activity } from 'lucide-react';
+import { Activity, ChevronDown, ChevronUp, Radio, Search } from 'lucide-react';
 import { LEAD_ORIGIN_PRESETS, PERSONA_CONTENTS } from '../data/seeds';
 import type { ContextState, LeadOriginPreset } from '../types/legal';
 
@@ -11,89 +11,105 @@ interface LeadOriginSimulatorProps {
 
 export function LeadOriginSimulator({ contextState, onSimulate }: LeadOriginSimulatorProps) {
   const [expanded, setExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Close popover when clicking outside
+  useEffect(() => {
+    if (!expanded) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [expanded]);
 
   const activePersonaLabel = PERSONA_CONTENTS[contextState.activePersona].areaLabel;
 
   return (
-    <div className="simulator-dock" aria-label="Simulador de Origem do Lead">
-      <div className="editorial-container">
-        <div className="simulator-bar-header">
-          <div className="simulator-status-summary">
-            <Compass size={15} strokeWidth={1.6} aria-hidden="true" />
-            <span className="simulator-title-label">Simular Origem do Lead</span>
-            <span className="simulator-divider" aria-hidden="true">
-              |
-            </span>
-            <span className="simulator-current-reading">
-              Persona inferida: <strong>{activePersonaLabel}</strong> (
-              {Math.round(contextState.confidence * 100)}%)
-            </span>
-          </div>
-
-          <button
-            type="button"
-            className="simulator-toggle-btn"
-            onClick={() => setExpanded((prev) => !prev)}
-            aria-expanded={expanded}
+    <div
+      ref={containerRef}
+      className="floating-sim-wrapper"
+      aria-label="Simulador de Sinal de Busca (Demonstração Presencial)"
+    >
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            key="sim-popover"
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.97 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="floating-sim-popover"
+            role="dialog"
+            aria-label="Cenários de busca para demonstração"
           >
-            <span>{expanded ? 'Recolher cenários' : 'Testar cenários de busca'}</span>
-            {expanded ? (
-              <ChevronDown size={15} strokeWidth={1.7} aria-hidden="true" />
-            ) : (
-              <ChevronUp size={15} strokeWidth={1.7} aria-hidden="true" />
-            )}
-          </button>
-        </div>
-
-        <AnimatePresence initial={false}>
-          {expanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              style={{ overflow: 'hidden' }}
-            >
-              <div className="simulator-panel-body">
-                <p className="simulator-helper-copy">
-                  Demonstração em campo: selecione como o cliente chegou ao escritório para observar a
-                  adaptação silenciosa de manchetes, dores jurídicas, casos reais e mensagem de
-                  WhatsApp.
-                </p>
-
-                <div className="simulator-presets-grid">
-                  {LEAD_ORIGIN_PRESETS.map((preset) => {
-                    const isSelected = contextState.activePersona === preset.personaId;
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        className={`simulator-preset-btn ${isSelected ? 'is-active' : ''}`}
-                        onClick={() => onSimulate(preset)}
-                      >
-                        <span className="preset-label">{preset.label}</span>
-                        <span className="preset-param">
-                          {preset.utmTerm ? `?utm_term=${preset.utmTerm}` : 'Acesso direto'}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {contextState.lastSignal && (
-                  <div className="simulator-telemetry-line">
-                    <Activity size={13} strokeWidth={1.6} aria-hidden="true" />
-                    <span>
-                      Último sinal capturado: <strong>{contextState.lastSignal.source}</strong> (
-                      {contextState.lastSignal.detail}) • Origem: {contextState.originSummary}
-                    </span>
-                  </div>
-                )}
+            <div className="floating-sim-head">
+              <div className="floating-sim-title">
+                <Radio size={13} strokeWidth={1.8} aria-hidden="true" />
+                <span>PredictiveIntentEngine • Demo em Campo</span>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              <span className="floating-sim-conf">
+                {Math.round(contextState.confidence * 100)}% confiança
+              </span>
+            </div>
+
+            <p className="floating-sim-desc">
+              Injete um sinal real de busca (Google ou Instagram) para ver a página inteira se
+              reescrever ao vivo sem nenhum formulário.
+            </p>
+
+            <div className="floating-sim-list">
+              {LEAD_ORIGIN_PRESETS.map((preset) => {
+                const isSelected = contextState.activePersona === preset.personaId;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className={`floating-sim-option ${isSelected ? 'is-active' : ''}`}
+                    onClick={() => {
+                      onSimulate(preset);
+                      setExpanded(false);
+                    }}
+                  >
+                    <Search size={13} strokeWidth={1.7} aria-hidden="true" />
+                    <div className="floating-sim-opt-copy">
+                      <span className="floating-sim-opt-label">{preset.label}</span>
+                      <span className="floating-sim-opt-meta">
+                        ?utm_source={preset.utmSource}&amp;utm_term={preset.utmTerm}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="floating-sim-telemetry">
+              <Activity size={12} strokeWidth={1.7} aria-hidden="true" />
+              <span>
+                Ativo: <strong>{activePersonaLabel}</strong>
+                {contextState.lastSignal ? ` • ${contextState.lastSignal.detail}` : ''}
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <button
+        type="button"
+        className={`floating-sim-pill ${expanded ? 'is-open' : ''}`}
+        onClick={() => setExpanded((prev) => !prev)}
+        aria-expanded={expanded}
+      >
+        <span className="floating-sim-dot" aria-hidden="true" />
+        <span>Simular Sinal de Busca</span>
+        {expanded ? (
+          <ChevronUp size={14} strokeWidth={1.8} aria-hidden="true" />
+        ) : (
+          <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" />
+        )}
+      </button>
     </div>
   );
 }

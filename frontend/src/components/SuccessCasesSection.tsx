@@ -21,6 +21,7 @@ export function SuccessCasesSection({
   return (
     <motion.section
       id="casos-resolvidos"
+      data-intent-area={personaId}
       className="cases-section"
       onViewportEnter={() => onSectionVisible(personaId)}
       viewport={{ once: false, amount: 0.25 }}

@@ -19,7 +19,7 @@ export function PracticeAreasSection({
     window.clearTimeout(hoverTimersRef.current[area]);
     hoverTimersRef.current[area] = window.setTimeout(() => {
       onSelectArea(area, 'hover');
-    }, 650);
+    }, 550);
   };
 
   const handleMouseLeave = (area: PersonaId) => {
@@ -36,8 +36,8 @@ export function PracticeAreasSection({
           </div>
           <div className="section-header-aside">
             <p className="section-aside-copy">
-              Selecione ou examine um núcleo abaixo. Toda a página — incluindo precedentes e
-              direcionamento de atendimento — ajusta-se imediatamente à sua necessidade.
+              Selecione ou examine um núcleo abaixo. Toda a página — precedentes, diagnóstico e
+              direcionamento de atendimento — adapta-se imediatamente à sua necessidade.
             </p>
           </div>
         </div>
@@ -54,6 +54,7 @@ export function PracticeAreasSection({
                 key={areaId}
                 type="button"
                 role="listitem"
+                data-intent-area={areaId}
                 className={`area-index-row ${isSelected ? 'is-active' : ''}`}
                 onMouseEnter={() => handleMouseEnter(areaId)}
                 onMouseLeave={() => handleMouseLeave(areaId)}

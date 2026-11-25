@@ -76,20 +76,22 @@ O banco utiliza o módulo nativo **`node:sqlite` (`DatabaseSync`)** com `PRAGMA 
 
 ---
 
-## 4. Motor de Adaptação Silenciosa em 3 Camadas
+## 4. Hierarquia de Alta Conversão & `PredictiveIntentEngine` ("Estilo TikTok")
 
-Implementado em `frontend/src/lib/contextEngine.ts`, o motor calcula continuamente a persona vencedora (`pickWinningPersona`) e atualiza manchetes (`KineticHeadline`), dores (`AuthorityPainSection`), casos (`SuccessCasesSection`) e link do WhatsApp sem recarregar a página:
-
-1. **Camada 1 — Origem URL & Referrer:** lê `?area=`, `?utm_term=`, `?utm_campaign=`, `?utm_source=` e `document.referrer`, aplicando pontuação imediata por correspondência normalizada de palavras-chave.
-2. **Camada 2 — Continuidade de Sessão:** persiste `sessionId`, `activePersona` e `scores` no cookie first-party `adv_autoseller_ctx` (30 dias, `SameSite=Lax`) e no storage local (`IndexedDB` + `localStorage`) para reconhecer visitantes recorrentes.
-3. **Camada 3 — Sinais Comportamentais em Tempo Real:** registra `hover` prolongado (`>= 650ms`) e `click` nas áreas de atuação (`PracticeAreasSection`), além de tempo de leitura via `IntersectionObserver` (`3500ms`), sincronizando assincronamente com `POST /api/telemetry/session`.
+- **Primeira Dobra de Autoridade (`App.tsx`):**
+  - **Badge de Detecção em Tempo Real** acima da Headline principal (`● Contexto identificado: Direito Imobiliário — Distrato & Atraso de Obra`), comunicando imediatamente que a página compreendeu a demanda sem formulário.
+  - **Precedentes na Primeira Dobra (`SuccessCasesSection`):** a seção *"Precedentes & Resultados Documentados — Já resolvemos um caso idêntico ao seu"* foi posicionada imediatamente abaixo da Hero Section, antes do Diagnóstico Jurídico e dos Núcleos de Atuação.
+  - **Coerência 100% por Contexto (Zero Mistura):** cada especialidade ativa exibe exclusivamente **3 casos reais distintos daquela mesma área**, 3 pontos de Diagnóstico Jurídico coerentes, Headline dinâmica e link de WhatsApp pré-preenchido específico. Clicar em qualquer núcleo ou cenário rola suavemente para o topo mostrando a nova versão personalizada.
+- **Serviço Dedicado `PredictiveIntentEngine` (`frontend/src/lib/predictiveIntentEngine.ts`):**
+  1. **Sinais de Entrada:** captura automaticamente `document.referrer`, parâmetros de URL (`utm_term`, `utm_campaign`, `utm_source`, `q`, `tema`, `area`), período/horário de acesso e histórico persistente de visitas anteriores (`document.cookie` + `localStorage` + `IndexedDB`).
+  2. **Rastreamento Comportamental Passivo:** monitora paradas de scroll e tempo de leitura por bloco (`[data-intent-area]` + `IntersectionObserver`), hover prolongado (`>= 550ms`) em núcleos jurídicos e **seleção de texto na página** (`mouseup`/`touchend`), aplicando score ponderado com decaimento temporal até atingir o limiar de confiança e adaptar a página silenciosamente.
 
 ---
 
-## 5. Motor White-Label & Simulador de Origem do Lead
+## 5. Motor White-Label & Pílula Flutuante de Demonstração (`Simular Sinal de Busca ▾`)
 
-- **Motor White-Label (`frontend/src/components/WhiteLabelModal.tsx`):** modal acessível pelo cabeçalho que edita ao vivo nome do advogado(a), OAB, nome do escritório, WhatsApp, cidade/seccional, especialidade principal, anos de atuação e foto do titular (upload convertido em Data URL ou monograma editorial), com botão de restauração para o perfil padrão.
-- **Simulador de Origem do Lead (`frontend/src/components/LeadOriginSimulator.tsx`):** dock discreto no rodapé que exibe a persona inferida, o percentual de confiança e o último sinal capturado, permitindo alternar cenários (`?utm_term=`) com atualização limpa da URL via `window.history.replaceState`.
+- **Motor White-Label (`frontend/src/components/WhiteLabelModal.tsx`):** modal discreto no cabeçalho para editar ao vivo nome do advogado(a), OAB, escritório, WhatsApp, cidade, especialidade principal, anos de atuação e foto do titular (Data URL ou monograma).
+- **Pílula Flutuante no Canto Inferior Esquerdo (`frontend/src/components/LeadOriginSimulator.tsx`):** botão discreto **`Simular Sinal de Busca ▾`** com cenários reais de Google e Instagram (*"Busca Google: Construtora atrasou entrega"*, *"Busca Google: Fui demitido como PJ"*, *"Instagram: Partilha de bens no divórcio"*, *"Busca Google: INSS negou aposentadoria"* e *"Busca Google: Nome negativado indevidamente"*). Ao clicar, injeta o sinal no `PredictiveIntentEngine`, atualiza a URL via `history.replaceState`, reescreve a página ao vivo e rola suavemente para o topo.
 
 ---
 
