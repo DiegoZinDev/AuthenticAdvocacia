@@ -3,6 +3,7 @@ import type {
   ContextSignal,
   ContextState,
   LeadOriginPreset,
+  LegalCase,
   NeuralTelemetrySnapshot,
   PersonaId,
   PersonaScores,
@@ -971,6 +972,109 @@ export class PredictiveIntentEngine {
     for (const fn of this.cleanupFns) fn();
     this.cleanupFns = [];
   }
+}
+
+export interface LegalAlertInfo {
+  tag: string;
+  statute: string;
+  detail: string;
+}
+
+export const LEGAL_ALERT_BY_PERSONA: Record<PersonaId, LegalAlertInfo> = {
+  geral: {
+    tag: 'Base Jurídica & Prazos',
+    statute: 'Tutela de Urgência (Art. 300 CPC) & Análise Documental',
+    detail:
+      'A verificação imediata de prazos prescricionais e provas documentais preserva liminares e evita perda irreversível de direitos.',
+  },
+  imobiliario: {
+    tag: 'Jurisprudência & Prazo Imobiliário',
+    statute: 'Súmula 543 do STJ & Lei do Distrato',
+    detail:
+      'Retenção abusiva pela construtora em caso de atraso ou culpa da incorporadora garante restituição integral (100%) com juros e correção.',
+  },
+  trabalhista: {
+    tag: 'Prazo Prescricional Crítico',
+    statute: 'Prazo Prescricional Bienal da CLT (Art. 7º, XXIX, CF)',
+    detail:
+      'O trabalhador tem até 2 anos após o desligamento para ajuizar ação e cobrar os últimos 5 anos de verbas sonegadas (vínculo PJ, horas extras, FGTS).',
+  },
+  familia: {
+    tag: 'Medida Cautelar Preventiva',
+    statute: 'Tutela Cautelar de Urgência (Art. 300 CPC) & Lei de Alimentos',
+    detail:
+      'Bloqueio preventivo de bens e fixação liminar de pensão podem ser deferidos em dias antes da citação da parte contrária.',
+  },
+  previdenciario: {
+    tag: 'Regra de Transição & Decadência',
+    statute: 'Regras de Transição (EC 103/2019) & Decadência Revisional',
+    detail:
+      'Análise prévia do CNIS e PPP evita concessão vitalícia em valor inferior e preserva retroativos dos últimos 5 anos.',
+  },
+  consumidor: {
+    tag: 'Tutela Inibitória Bancária',
+    statute: 'Tutela de Urgência (CDC Art. 42) & Liminar em 48h',
+    detail:
+      'Negativações indevidas e fraudes bancárias/Pix admitem exclusão imediata do cadastro e devolução em dobro do indébito.',
+  },
+  saude: {
+    tag: 'Plantão Judicial de Saúde',
+    statute: 'Liminar no Plantão Judicial TJDFT & Lei 14.454/2022',
+    detail:
+      'O rol da ANS é exemplificativo; cirurgias, próteses, medicamentos de alto custo e Home Care prescritos podem ser autorizados em horas.',
+  },
+  empresarial: {
+    tag: 'Recuperação & Blindagem B2B',
+    statute: 'Execução de Título Extrajudicial & Dissolução Parcial (CPC Art. 600)',
+    detail:
+      'Medidas patrimoniais céleres (Sisbajud/Sniper) e blindagem societária protegem o caixa operacional.',
+  },
+  criminal: {
+    tag: 'Plantão Criminal Imediato',
+    statute: 'Audiência de Custódia em 24h (Art. 310 CPP) & Habeas Corpus Liminar',
+    detail:
+      'As primeiras horas após flagrante ou condução definem liberdade provisória e nulidade de provas ilícitas.',
+  },
+};
+
+function formatUrgencyLabel(level: NeuralTelemetrySnapshot['urgencyLevel']): string {
+  if (level === 'critica') return 'CRÍTICA (Plantão 24h)';
+  if (level === 'elevada') return 'Elevada';
+  return 'Prioritária';
+}
+
+export function buildWhatsAppTriageDossier(
+  whatsappNumber: string,
+  lawyerName: string,
+  state: ContextState,
+  focusedCase?: LegalCase | null
+): { text: string; url: string } {
+  const digits = whatsappNumber.replace(/\D/g, '') || '5561998421048';
+  const normalizedPhone = digits.startsWith('55') ? digits : `55${digits}`;
+  const shortLawyer = lawyerName.split(' ').slice(0, 2).join(' ') || 'Dr. Henrique';
+  const persona = PERSONA_CONTENTS[state.activePersona];
+  const confidencePct = Math.round(state.confidence * 100);
+  const urgencyLabel = formatUrgencyLabel(state.telemetry.urgencyLevel);
+
+  const lines: string[] = [
+    `Olá, ${shortLawyer}. Preciso de orientação jurídica imediata.`,
+    `Área identificada: ${persona.areaLabel} (${persona.badgeSubtitle}).`,
+  ];
+
+  if (focusedCase) {
+    lines.push(`Analisei o precedente de ${focusedCase.courtRef}: "${focusedCase.title}".`);
+  }
+
+  lines.push(
+    `Urgência: ${urgencyLabel} • Contexto: ${state.accessPeriod} (${state.telemetry.deviceLabel}).`
+  );
+  lines.push(`[Triagem Auto-Seller • Confiança ${confidencePct}%]`);
+
+  const text = lines.join('\n');
+  return {
+    text,
+    url: `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(text)}`,
+  };
 }
 
 export function buildWhatsappUrl(

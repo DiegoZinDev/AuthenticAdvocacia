@@ -11,7 +11,7 @@ import {
 import { DEFAULT_LAWYER_PROFILE, LEGAL_CASES, PERSONA_CONTENTS } from './data/seeds';
 import {
   PredictiveIntentEngine,
-  buildWhatsappUrl,
+  buildWhatsAppTriageDossier,
 } from './lib/predictiveIntentEngine';
 import {
   getCasesForPersona,
@@ -62,12 +62,17 @@ export function App() {
   );
   const [whiteLabelOpen, setWhiteLabelOpen] = useState(false);
   const [heroPortraitFallback, setHeroPortraitFallback] = useState(false);
+  const [focusedCase, setFocusedCase] = useState<LegalCase | null>(null);
 
   const sectionTimerRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     setHeroPortraitFallback(false);
   }, [profile.photoUrl]);
+
+  useEffect(() => {
+    setFocusedCase(null);
+  }, [contextState.activePersona]);
 
   // Subscribe to PredictiveIntentEngine + start passive TikTok-style listeners
   useEffect(() => {
@@ -120,10 +125,17 @@ export function App() {
     [contextState.activePersona]
   );
 
-  const whatsappUrl = useMemo(
-    () => buildWhatsappUrl(profile.whatsapp, profile.lawyerName, contextState.activePersona),
-    [profile.whatsapp, profile.lawyerName, contextState.activePersona]
+  const whatsappDossier = useMemo(
+    () =>
+      buildWhatsAppTriageDossier(
+        profile.whatsapp,
+        profile.lawyerName,
+        contextState,
+        focusedCase
+      ),
+    [profile.whatsapp, profile.lawyerName, contextState, focusedCase]
   );
+  const whatsappUrl = whatsappDossier.url;
 
   const heroPortraitSrc = useMemo(() => {
     if (heroPortraitFallback) return '/lawyer-portrait.png';
@@ -359,6 +371,10 @@ export function App() {
           personaId={contextState.activePersona}
           cases={cases}
           whatsappUrl={whatsappUrl}
+          contextState={contextState}
+          lawyerName={profile.lawyerName}
+          lawyerWhatsapp={profile.whatsapp}
+          onFocusCase={setFocusedCase}
           onSectionVisible={handleSectionVisible}
         />
 
@@ -397,7 +413,11 @@ export function App() {
       </footer>
 
       {/* Discreet Floating Bottom-Left Field Demo Pill */}
-      <LeadOriginSimulator contextState={contextState} onSimulate={handleSimulateOrigin} />
+      <LeadOriginSimulator
+        contextState={contextState}
+        whatsappDossierText={whatsappDossier.text}
+        onSimulate={handleSimulateOrigin}
+      />
 
       <WhiteLabelModal
         isOpen={whiteLabelOpen}
