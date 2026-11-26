@@ -10,7 +10,6 @@ interface CookieConsentBannerProps {
   forceOpenPreferences: boolean;
   onSaveConsent: (analyticsAndContext: boolean) => void;
   onClosePreferences: () => void;
-  onOpenDoc: (tab: LegalDocTab) => void;
 }
 
 export function CookieConsentBanner({
@@ -18,7 +17,6 @@ export function CookieConsentBanner({
   forceOpenPreferences,
   onSaveConsent,
   onClosePreferences,
-  onOpenDoc,
 }: CookieConsentBannerProps) {
   const [managing, setManaging] = useState(false);
   const [contextToggle, setContextToggle] = useState(consent.analyticsAndContext);
@@ -44,7 +42,7 @@ export function CookieConsentBanner({
             <div className="cookie-banner-copy">
               <div className="cookie-banner-title-row">
                 <Cookie size={15} strokeWidth={1.7} aria-hidden="true" />
-                <strong>Privacidade &amp; Cookies (LGPD — Guia ANPD)</strong>
+                <strong>Você aceita que o site use os cookies do navegador?</strong>
                 {forceOpenPreferences && (
                   <button
                     type="button"
@@ -60,16 +58,16 @@ export function CookieConsentBanner({
                 )}
               </div>
               <p>
-                Utilizamos cookies estritamente necessários para o funcionamento do site e, somente
-                com o seu consentimento, armazenamento local de contexto para adaptar as perguntas
-                informativas. Consulte nossa{' '}
-                <button
-                  type="button"
+                Cookies são pequenos arquivos salvos no navegador para manter o site funcionando
+                corretamente e tornar sua navegação mais prática.{' '}
+                <a
+                  href="https://policies.google.com/technologies/cookies?hl=pt-BR"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="triage-inline-link"
-                  onClick={() => onOpenDoc('privacidade')}
                 >
-                  Política de Privacidade
-                </button>
+                  Saiba mais sobre as políticas de privacidade dos cookies
+                </a>
                 .
               </p>
 
@@ -78,8 +76,8 @@ export function CookieConsentBanner({
                   <label className="cookie-toggle-row">
                     <input type="checkbox" checked disabled />
                     <span>
-                      <strong>Essenciais (sempre ativos):</strong> segurança, acessibilidade e
-                      preferências de consentimento.
+                      <strong>Cookies essenciais (sempre ativos):</strong> necessários para o
+                      funcionamento básico do site.
                     </span>
                   </label>
                   <label className="cookie-toggle-row">
@@ -89,8 +87,8 @@ export function CookieConsentBanner({
                       onChange={(e) => setContextToggle(e.target.checked)}
                     />
                     <span>
-                      <strong>Personalização informativa local (opcional):</strong> lembra a área
-                      jurídica consultada nesta visita para adaptar o formulário de triagem.
+                      <strong>Cookies de preferência (opcional):</strong> lembram o tema consultado
+                      para deixar as perguntas mais úteis na sua visita.
                     </span>
                   </label>
                 </div>
