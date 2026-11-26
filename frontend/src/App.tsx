@@ -30,6 +30,7 @@ import { KineticHeadline } from './components/KineticHeadline';
 import { AdaptiveTriageSection } from './components/AdaptiveTriageSection';
 import { PracticeAreasSection } from './components/PracticeAreasSection';
 import { AuthorityPainSection } from './components/AuthorityPainSection';
+import { LocalSeoFaqSection } from './components/LocalSeoFaqSection';
 import { WhiteLabelModal } from './components/WhiteLabelModal';
 import { LeadOriginSimulator } from './components/LeadOriginSimulator';
 import {
@@ -37,6 +38,7 @@ import {
   LegalDocumentModal,
   type LegalDocTab,
 } from './components/LegalComplianceStack';
+import { applyWhiteLabelSeoToDocument } from './lib/seoEngine';
 
 const COOKIE_CONSENT_STORAGE_KEY = 'adv_lgpd_cookie_consent_v1';
 
@@ -109,6 +111,11 @@ export function App() {
   useEffect(() => {
     setHeroPortraitFallback(false);
   }, [profile.photoUrl]);
+
+  // Synchronize live On-Page SEO (<title>, meta description, canonical, OG, JSON-LD LegalService/Attorney/FAQPage)
+  useEffect(() => {
+    applyWhiteLabelSeoToDocument(profile, contextState.activePersona);
+  }, [profile, contextState.activePersona]);
 
   // Subscribe to PredictiveIntentEngine + start passive listeners only if allowed or in-memory
   useEffect(() => {
@@ -264,6 +271,7 @@ export function App() {
             <a href="#triagem-adaptativa">Triagem Informativa</a>
             <a href="#autoridade">Orientações</a>
             <a href="#areas-atuacao">Áreas de Atuação</a>
+            <a href="#duvidas-frequentes">Dúvidas</a>
           </nav>
 
           <div className="masthead-actions">
@@ -281,8 +289,8 @@ export function App() {
               type="button"
               className="whitelabel-trigger-btn"
               onClick={() => setWhiteLabelOpen(true)}
-              title="Personalizar escritório (White-Label)"
-              aria-label="Abrir configurações White-Label do escritório"
+              title="Personalizar escritório e SEO Local (White-Label)"
+              aria-label="Abrir configurações White-Label e SEO do escritório"
             >
               <Settings2 size={17} strokeWidth={1.6} aria-hidden="true" />
             </button>
@@ -304,7 +312,7 @@ export function App() {
               >
                 <img
                   src={heroPortraitSrc}
-                  alt={`${profile.lawyerName} — ${profile.firmName}`}
+                  alt={`Advogado ${profile.lawyerName} (${profile.oabNumber}) — ${activePersonaContent.areaLabel} em ${profile.city}`}
                   className="hero-portrait-img"
                   decoding="async"
                   onError={() => {
@@ -431,6 +439,13 @@ export function App() {
           activePersona={contextState.activePersona}
           onSelectArea={handleSelectPracticeArea}
         />
+
+        {/* Crawlable Local SEO FAQPage & Hyperlocal NAP Regional Coverage */}
+        <LocalSeoFaqSection
+          profile={profile}
+          activePersona={contextState.activePersona}
+          onSelectArea={handleSelectPracticeArea}
+        />
       </main>
 
       {/* Editorial Footer — Full OAB Prov. 205/2021 + LGPD + Marco Civil Compliance Stack */}
@@ -489,6 +504,7 @@ export function App() {
       <WhiteLabelModal
         isOpen={whiteLabelOpen}
         profile={profile}
+        activePersona={contextState.activePersona}
         isOfflineFallback={isOfflineFallback}
         onClose={() => setWhiteLabelOpen(false)}
         onSave={handleSaveProfile}

@@ -14,6 +14,22 @@ export type LegalPracticeModel =
   | 'sociedade_individual'
   | 'sociedade_advogados';
 
+export interface WhiteLabelSeoConfig {
+  siteUrl: string;
+  cityName: string;
+  stateCode: string;
+  neighborhoods: string[];
+  streetAddress: string;
+  postalCode: string;
+  latitude?: string;
+  longitude?: string;
+  openingHours: string;
+  googleBusinessUrl?: string;
+  focusKeywords: string[];
+  customTitleOverride?: string;
+  customDescriptionOverride?: string;
+}
+
 export interface LawyerProfile {
   id: string;
   lawyerName: string;
@@ -29,6 +45,7 @@ export interface LawyerProfile {
   /** @deprecated Mantido apenas para compatibilidade legada de schema; não exibido na UI (Prov. 205/2021). */
   solvedCasesCount?: number;
   editorialQuote: string;
+  seo?: WhiteLabelSeoConfig;
   updatedAt?: string;
 }
 

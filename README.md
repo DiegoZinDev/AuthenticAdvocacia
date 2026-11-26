@@ -179,6 +179,20 @@ Em conformidade estrita com o **Provimento CFOAB nº 205/2021**, **Estatuto da A
 
 ---
 
+## 7.2 Motor de SEO Local White-Label (`feat/whitelabel-local-seo-engine`) — Tráfego Orgânico & 1ª Página do Google
+
+Baseado integralmente no **Guia Completo do SEO — 3ª Edição (Resultados Digitais & Agência Mestre)** e blindado pelo **Provimento CFOAB nº 205/2021**:
+
+- **Motor Dinâmico On-Page & Schema.org (`frontend/src/lib/seoEngine.ts`)**:
+  - **Title Tag (`<= 63` caracteres)** com palavra-chave principal + cidade/UF no início e marca ao final (`Advogado Previdenciário em Brasília/DF | Valença & Associados`), e **Meta Description (`<= 160` caracteres)** orientada a CTR sem promessas vedadas.
+  - **Canonical Dinâmico & Prevenção de Conteúdo Duplicado**: URLs amigáveis (`/atuacao/direito-previdenciario`, etc.) sem parâmetros UTM no `<link rel="canonical">`, além de `robots` (`index, follow, max-image-preview:large`), `geo.region`, `geo.placename`, OpenGraph e Twitter Cards.
+  - **4 Grafos JSON-LD Estruturados (`@graph`)**: `LegalService` (NAP completo + `GeoCoordinates` + `areaServed` por cidade e bairros para buscas *"advogado perto de mim"* + `sameAs` Google Perfil da Empresa), `Attorney` (nome + OAB), `FAQPage` (Rich Snippets) e `BreadcrumbList`.
+- **FAQ Informativo Rastreável & Cobertura Hiperlocal (`frontend/src/components/LocalSeoFaqSection.tsx`)**: Perguntas frequentes em linguagem simples (zero juridiquês) adaptadas à área ativa e à cidade/bairros do cliente, cartão NAP local e linkagem interna entre os 8 núcleos jurídicos.
+- **Painel White-Label de SEO Local (`WhiteLabelModal.tsx` — Aba `SEO Local & Google`)**: Permite à agência/escritório adaptar domínio, cidade, UF, bairros atendidos, endereço, CEP, Google Maps, palavras-chave foco e overrides de Title/Description com **prévia ao vivo da SERP do Google**, **Score SEO 0–100** e **download 1-clique de `sitemap.xml` e `robots.txt`** personalizados para o cliente.
+- **Arquivos Estáticos de Rastreabilidade**: `frontend/public/robots.txt`, `frontend/public/sitemap.xml` e baseline JSON-LD/OG em `frontend/index.html`.
+
+---
+
 ## 8. Governança de Documentação
 
 Este repositório segue governança estrita contendo **exclusivamente 2 arquivos de documentação**:
