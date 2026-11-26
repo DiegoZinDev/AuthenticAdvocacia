@@ -57,15 +57,14 @@ export function LocalSeoFaqSection({
           {/* Left Column: Crawlable Informative FAQ (Schema.org FAQPage) + E-E-A-T Authorship */}
           <div className="local-faq-column">
             <p className="editorial-eyebrow">
-              Dúvidas Frequentes • Caráter Informativo ({seo.cityName}/{seo.stateCode})
+              Dúvidas Frequentes • {seo.cityName}/{seo.stateCode}
             </p>
             <h2 id="local-seo-heading" className="section-title">
               Perguntas comuns sobre {persona.areaLabel} em {seo.cityName}
             </h2>
             <p className="local-seo-lead">
-              <strong>Resposta direta e sem juridiquês:</strong> reunimos abaixo os principais
-              esclarecimentos sobre documentos, prazos e atendimento em {seo.cityName}/
-              {seo.stateCode} antes da sua conversa com o advogado titular.
+              Esclarecimentos diretos e em linguagem simples sobre documentos, prazos e atendimento
+              em {seo.cityName}/{seo.stateCode}.
             </p>
 
             <div className="local-faq-list">
@@ -95,11 +94,11 @@ export function LocalSeoFaqSection({
               })}
             </div>
 
-            {/* Google YMYL / E-E-A-T Authorship & Editorial Review Byline ("Who, How, Why") */}
+            {/* Authorship & Technical Review Byline */}
             <aside className="eeat-author-card" aria-label="Autoria e revisão técnica OAB">
               <div className="eeat-author-head">
                 <BadgeCheck size={16} strokeWidth={1.8} aria-hidden="true" />
-                <span>Revisão Técnica &amp; Autoria (E-E-A-T • OAB)</span>
+                <span>Responsável Técnico • OAB</span>
                 <time dateTime={updatedIso} className="eeat-updated-date">
                   Atualizado em {updatedIso}
                 </time>

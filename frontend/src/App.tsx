@@ -300,7 +300,7 @@ export function App() {
           </a>
 
           <nav className="masthead-nav" aria-label="Navegação principal">
-            <a href="#triagem-adaptativa">Triagem Informativa</a>
+            <a href="#triagem-adaptativa">Atendimento</a>
             <a href="#autoridade">Orientações</a>
             <a href="#areas-atuacao">Áreas de Atuação</a>
             <a href="#duvidas-frequentes">Dúvidas</a>
@@ -377,8 +377,7 @@ export function App() {
                     >
                       <span className="live-context-dot" aria-hidden="true" />
                       <span className="live-context-label">
-                        Tema em foco:{' '}
-                        <strong>{activePersonaContent.badgeSubtitle}</strong>
+                        <strong>{activePersonaContent.areaLabel}</strong>
                       </span>
                     </motion.div>
                   </AnimatePresence>
@@ -400,7 +399,7 @@ export function App() {
 
                   <div className="hero-cta-row">
                     <a href="#triagem-adaptativa" className="btn-primary-gold">
-                      <span>Iniciar Triagem Informativa</span>
+                      <span>Conte-nos sua situação</span>
                       <ArrowDown size={15} strokeWidth={1.8} aria-hidden="true" />
                     </a>
 

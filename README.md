@@ -194,6 +194,7 @@ Baseado integralmente no **Guia Completo do SEO — 3ª Edição (Resultados Dig
   - **Links Internos Rastreáveis & Roteamento Amigável Real (`PracticeAreasSection.tsx`, `LocalSeoFaqSection.tsx`, `App.tsx`)**: Conversão dos botões de área jurídica em links reais `<a href="/atuacao/...">` com `history.pushState`, hidratação direta pelo `pathname` e suporte a `popstate`.
   - **YMYL / E-E-A-T ("Quem, Como e Por Quê")**: Cartão visível de autoria e revisão técnica OAB (`academicBio`, `<time dateTime>`, link oficial para o **CNA/OAB** `https://cna.oab.org.br/`), breadcrumb semântico visível e grafos `WebSite` + `WebPage` (`author`, `reviewedBy`, `dateModified`) no JSON-LD.
   - **Core Web Vitals (LCP/CLS) & Search Console**: Preload `fetchpriority="high"` + `width`/`height` na imagem Hero, campo `google-site-verification` no painel White-Label e auditoria SEO ampliada para 8 critérios (0–100).
+  - **Linguagem Natural Pronta para Entrega ao Cliente (`feat/natural-client-ready-ux`)**: Remoção de jargões técnicos visíveis ao visitante final (*"triagem"*, *"adaptativo"*, *"pistas contextuais"*, *"E-E-A-T"*) mantendo a inteligência adaptativa operando silenciosamente nos bastidores, com título humano e em conformidade OAB (*"Queremos entender melhor o seu problema. Conte-nos um pouco mais"*).
 
 ---
 

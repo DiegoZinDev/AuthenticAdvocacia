@@ -105,16 +105,16 @@ export function AuthorityPainSection({
 
             <ol className="method-steps-list" aria-label="Etapas do atendimento">
               <li>
-                <strong>1. Triagem Informativa:</strong> organização inicial do contexto e
-                checklist documental.
+                <strong>1. Primeiro contato:</strong> você nos conta brevemente sua situação e
+                vê quais documentos podem ajudar.
               </li>
               <li>
-                <strong>2. Atendimento Reservado:</strong> análise individualizada conduzida
+                <strong>2. Conversa reservada:</strong> análise individualizada conduzida
                 diretamente pelo advogado titular.
               </li>
               <li>
-                <strong>3. Orientação Técnica:</strong> esclarecimento claro sobre vias
-                administrativas ou judiciais cabíveis.
+                <strong>3. Orientação clara:</strong> esclarecimento objetivo sobre os caminhos
+                administrativos ou judiciais cabíveis.
               </li>
             </ol>
 
