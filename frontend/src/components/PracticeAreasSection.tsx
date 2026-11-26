@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import { ORDERED_PRACTICE_AREAS, PERSONA_CONTENTS } from '../data/seeds';
+import { getPersonaFriendlySlug } from '../lib/seoEngine';
 import type { PersonaId } from '../types/legal';
 
 interface PracticeAreasSectionProps {
@@ -36,29 +37,34 @@ export function PracticeAreasSection({
           </div>
           <div className="section-header-aside">
             <p className="section-aside-copy">
-              Selecione ou examine um núcleo abaixo. Toda a página — precedentes, diagnóstico e
-              direcionamento de atendimento — adapta-se imediatamente à sua necessidade.
+              Selecione uma área jurídica abaixo. A triagem informativa, as orientações técnicas e
+              as dúvidas frequentes se adaptam imediatamente ao tema escolhido.
             </p>
           </div>
         </div>
 
         <div className="editorial-rule" />
 
-        <div className="areas-index-list" role="list">
+        <nav className="areas-index-list" aria-label="Núcleos de atuação jurídica">
           {ORDERED_PRACTICE_AREAS.map((areaId, index) => {
             const content = PERSONA_CONTENTS[areaId];
             const isSelected = activePersona === areaId;
+            const friendlyHref = getPersonaFriendlySlug(areaId);
 
             return (
-              <motion.button
+              <motion.a
                 key={areaId}
-                type="button"
-                role="listitem"
+                href={friendlyHref}
                 data-intent-area={areaId}
                 className={`area-index-row ${isSelected ? 'is-active' : ''}`}
                 onMouseEnter={() => handleMouseEnter(areaId)}
                 onMouseLeave={() => handleMouseLeave(areaId)}
-                onClick={() => onSelectArea(areaId, 'click')}
+                onClick={(e) => {
+                  if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                    e.preventDefault();
+                    onSelectArea(areaId, 'click');
+                  }
+                }}
                 whileHover={{ x: 4 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
@@ -84,10 +90,10 @@ export function PracticeAreasSection({
                     <ArrowRight size={17} strokeWidth={1.6} aria-hidden="true" />
                   </span>
                 </div>
-              </motion.button>
+              </motion.a>
             );
           })}
-        </div>
+        </nav>
       </div>
     </section>
   );

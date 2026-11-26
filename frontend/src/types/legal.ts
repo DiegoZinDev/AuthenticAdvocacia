@@ -25,6 +25,8 @@ export interface WhiteLabelSeoConfig {
   longitude?: string;
   openingHours: string;
   googleBusinessUrl?: string;
+  academicBio?: string;
+  googleVerificationCode?: string;
   focusKeywords: string[];
   customTitleOverride?: string;
   customDescriptionOverride?: string;

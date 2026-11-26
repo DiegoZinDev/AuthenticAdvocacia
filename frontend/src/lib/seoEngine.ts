@@ -128,6 +128,21 @@ function truncateCleanly(text: string, maxChars: number): string {
   return `${(lastSpace > maxChars * 0.65 ? sliced.slice(0, lastSpace) : sliced).trim()}…`;
 }
 
+export function getPersonaFriendlySlug(personaId: PersonaId): string {
+  return PERSONA_SEO_KEYWORDS[personaId]?.friendlySlug || '/';
+}
+
+export function resolvePersonaFromPathname(pathname: string): PersonaId | null {
+  const cleanPath = pathname.replace(/\/+$/, '').toLowerCase();
+  if (!cleanPath || cleanPath === '/') return null;
+  for (const [id, meta] of Object.entries(PERSONA_SEO_KEYWORDS)) {
+    if (meta.friendlySlug !== '/' && meta.friendlySlug.toLowerCase() === cleanPath) {
+      return id as PersonaId;
+    }
+  }
+  return null;
+}
+
 export function resolveWhiteLabelSeoConfig(profile: LawyerProfile): WhiteLabelSeoConfig {
   const inferred = parseCityAndState(profile.city);
   const seo = profile.seo;
@@ -161,6 +176,10 @@ export function resolveWhiteLabelSeoConfig(profile: LawyerProfile): WhiteLabelSe
     longitude: seo?.longitude?.trim() || undefined,
     openingHours: seo?.openingHours?.trim() || 'Mo-Fr 08:30-18:30',
     googleBusinessUrl: seo?.googleBusinessUrl?.trim() || '',
+    academicBio:
+      seo?.academicBio?.trim() ||
+      `Advogado inscrito sob ${profile.oabNumber}, com ${profile.experienceYears} anos de atuação técnica em ${cityName}/${stateCode}.`,
+    googleVerificationCode: seo?.googleVerificationCode?.trim() || '',
     focusKeywords,
     customTitleOverride: seo?.customTitleOverride?.trim() || '',
     customDescriptionOverride: seo?.customDescriptionOverride?.trim() || '',
@@ -416,9 +435,33 @@ export function buildJsonLdGraph(
     name: profile.lawyerName,
     identifier: profile.oabNumber,
     jobTitle: 'Advogado Titular',
+    description: seo.academicBio,
     image: metadata.ogImage,
     worksFor: { '@id': `${seo.siteUrl}/#legal-service` },
     knowsAbout: ORDERED_PRACTICE_AREAS.map((id) => PERSONA_CONTENTS[id].areaLabel),
+  };
+
+  const webSiteNode: Record<string, unknown> = {
+    '@type': 'WebSite',
+    '@id': `${seo.siteUrl}/#website`,
+    url: `${seo.siteUrl}/`,
+    name: profile.firmName,
+    inLanguage: 'pt-BR',
+    publisher: { '@id': `${seo.siteUrl}/#legal-service` },
+  };
+
+  const webPageNode: Record<string, unknown> = {
+    '@type': 'WebPage',
+    '@id': `${metadata.canonicalUrl}#webpage`,
+    url: metadata.canonicalUrl,
+    name: metadata.title,
+    description: metadata.description,
+    inLanguage: 'pt-BR',
+    isPartOf: { '@id': `${seo.siteUrl}/#website` },
+    about: { '@id': `${seo.siteUrl}/#legal-service` },
+    author: { '@id': `${seo.siteUrl}/#attorney` },
+    reviewedBy: { '@id': `${seo.siteUrl}/#attorney` },
+    dateModified: (profile.updatedAt || new Date().toISOString()).slice(0, 10),
   };
 
   const faqNode: Record<string, unknown> = {
@@ -454,7 +497,14 @@ export function buildJsonLdGraph(
 
   return {
     '@context': 'https://schema.org',
-    '@graph': [legalServiceNode, attorneyNode, faqNode, breadcrumbNode],
+    '@graph': [
+      legalServiceNode,
+      attorneyNode,
+      webSiteNode,
+      webPageNode,
+      faqNode,
+      breadcrumbNode,
+    ],
   };
 }
 
@@ -519,8 +569,23 @@ export function applyWhiteLabelSeoToDocument(
       'robots',
       'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
     );
+    upsertMetaTag(
+      'meta[name="googlebot"]',
+      'name',
+      'googlebot',
+      'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
+    );
     upsertMetaTag('meta[name="geo.region"]', 'name', 'geo.region', metadata.geoRegion);
     upsertMetaTag('meta[name="geo.placename"]', 'name', 'geo.placename', metadata.geoPlacename);
+
+    if (metadata.resolvedSeo.googleVerificationCode) {
+      upsertMetaTag(
+        'meta[name="google-site-verification"]',
+        'name',
+        'google-site-verification',
+        metadata.resolvedSeo.googleVerificationCode
+      );
+    }
 
     upsertMetaTag('meta[property="og:type"]', 'property', 'og:type', 'website');
     upsertMetaTag('meta[property="og:locale"]', 'property', 'og:locale', 'pt_BR');
@@ -553,8 +618,9 @@ export function applyWhiteLabelSeoToDocument(
 }
 
 /**
- * Audits the white-label client's SEO readiness (0–100) based on the
- * "Guia Completo do SEO - 3ª Edição" + Google Local Pack requirements.
+ * Audits the white-label client's SEO readiness (0–100) based on:
+ * Google Search Central (E-E-A-T / YMYL, Crawlable Links, Core Web Vitals) +
+ * Conversion SEO On-Page + Guia Completo do SEO (3ª ed.).
  */
 export function auditWhiteLabelSeo(
   profile: LawyerProfile,
@@ -568,7 +634,7 @@ export function auditWhiteLabelSeo(
       id: 'title-length',
       label: `Title Tag otimizada (${meta.title.length}/${SEO_TITLE_MAX_CHARS} chars)`,
       passed: meta.title.length >= 25 && meta.title.length <= SEO_TITLE_MAX_CHARS,
-      detail: 'Palavra-chave principal + cidade no início e marca ao final.',
+      detail: 'Palavra-chave principal + cidade à esquerda e marca ao final.',
     },
     {
       id: 'desc-length',
@@ -589,14 +655,26 @@ export function auditWhiteLabelSeo(
       detail: 'Pelo menos 3 bairros ou regiões no Schema areaServed e conteúdo.',
     },
     {
+      id: 'eeat-author',
+      label: 'E-E-A-T / YMYL (Autoria OAB + Bio Técnica + CNA)',
+      passed: Boolean(profile.oabNumber && profile.lawyerName && seo.academicBio && seo.academicBio.length >= 30),
+      detail: 'Sinaliza autoria verificável e revisão técnica humana ao Google.',
+    },
+    {
       id: 'schema-rich',
-      label: 'Dados Estruturados JSON-LD (LegalService + Attorney + FAQPage)',
+      label: 'JSON-LD Completo (LegalService + Attorney + WebPage + FAQPage)',
       passed: Boolean(profile.oabNumber && profile.lawyerName),
-      detail: 'Habilita Rich Snippets de FAQ e sinaliza autoridade OAB ao Google.',
+      detail: 'Habilita Rich Snippets de FAQ e sinaliza autoridade local.',
+    },
+    {
+      id: 'crawlable-urls',
+      label: 'Links internos rastreáveis (<a href="/atuacao/...">) + LCP Preload',
+      passed: true,
+      detail: 'Googlebot rastreia cada área jurídica sem depender de botões JS.',
     },
     {
       id: 'domain-canonical',
-      label: 'Domínio próprio + Canonical + Sitemap XML prontos',
+      label: 'Domínio HTTPS + Canonical + Sitemap XML prontos',
       passed: Boolean(seo.siteUrl && /^https:\/\//i.test(seo.siteUrl)),
       detail: 'Evita conteúdo duplicado entre www/sem-www e parâmetros UTM.',
     },

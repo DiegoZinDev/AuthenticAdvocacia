@@ -1,8 +1,19 @@
 import { useState } from 'react';
-import { ChevronDown, Clock, Compass, HelpCircle, MapPin, Navigation } from 'lucide-react';
+import {
+  BadgeCheck,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Compass,
+  ExternalLink,
+  HelpCircle,
+  MapPin,
+  Navigation,
+} from 'lucide-react';
 import { ORDERED_PRACTICE_AREAS, PERSONA_CONTENTS } from '../data/seeds';
 import {
   buildLocalFaqForPersona,
+  getPersonaFriendlySlug,
   resolveWhiteLabelSeoConfig,
 } from '../lib/seoEngine';
 import type { LawyerProfile, PersonaId } from '../types/legal';
@@ -22,6 +33,7 @@ export function LocalSeoFaqSection({
   const seo = resolveWhiteLabelSeoConfig(profile);
   const faqItems = buildLocalFaqForPersona(profile, activePersona);
   const persona = PERSONA_CONTENTS[activePersona];
+  const updatedIso = (profile.updatedAt || new Date().toISOString()).slice(0, 10);
 
   return (
     <section
@@ -30,8 +42,19 @@ export function LocalSeoFaqSection({
       aria-labelledby="local-seo-heading"
     >
       <div className="editorial-container">
+        {/* Visible Semantic Breadcrumb aligned with Schema.org BreadcrumbList */}
+        <nav className="seo-breadcrumb" aria-label="Caminho de navegação">
+          <a href="#topo">Início</a>
+          <ChevronRight size={12} strokeWidth={1.8} aria-hidden="true" />
+          <a href="#areas-atuacao">Áreas de Atuação</a>
+          <ChevronRight size={12} strokeWidth={1.8} aria-hidden="true" />
+          <span aria-current="page">
+            {persona.areaLabel} em {seo.cityName}/{seo.stateCode}
+          </span>
+        </nav>
+
         <div className="local-seo-grid">
-          {/* Left Column: Crawlable Informative FAQ (Schema.org FAQPage) */}
+          {/* Left Column: Crawlable Informative FAQ (Schema.org FAQPage) + E-E-A-T Authorship */}
           <div className="local-faq-column">
             <p className="editorial-eyebrow">
               Dúvidas Frequentes • Caráter Informativo ({seo.cityName}/{seo.stateCode})
@@ -40,8 +63,9 @@ export function LocalSeoFaqSection({
               Perguntas comuns sobre {persona.areaLabel} em {seo.cityName}
             </h2>
             <p className="local-seo-lead">
-              Respostas diretas, em linguagem clara e sem juridiquês, para orientar o primeiro
-              passo antes da sua conversa com o advogado titular.
+              <strong>Resposta direta e sem juridiquês:</strong> reunimos abaixo os principais
+              esclarecimentos sobre documentos, prazos e atendimento em {seo.cityName}/
+              {seo.stateCode} antes da sua conversa com o advogado titular.
             </p>
 
             <div className="local-faq-list">
@@ -70,9 +94,33 @@ export function LocalSeoFaqSection({
                 );
               })}
             </div>
+
+            {/* Google YMYL / E-E-A-T Authorship & Editorial Review Byline ("Who, How, Why") */}
+            <aside className="eeat-author-card" aria-label="Autoria e revisão técnica OAB">
+              <div className="eeat-author-head">
+                <BadgeCheck size={16} strokeWidth={1.8} aria-hidden="true" />
+                <span>Revisão Técnica &amp; Autoria (E-E-A-T • OAB)</span>
+                <time dateTime={updatedIso} className="eeat-updated-date">
+                  Atualizado em {updatedIso}
+                </time>
+              </div>
+              <p className="eeat-author-name">
+                <strong>{profile.lawyerName}</strong> — {profile.oabNumber}
+              </p>
+              <p className="eeat-author-bio">{seo.academicBio}</p>
+              <a
+                href="https://cna.oab.org.br/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="eeat-verify-link"
+              >
+                <span>Consultar inscrição oficial no Cadastro Nacional dos Advogados (CNA/OAB)</span>
+                <ExternalLink size={12} strokeWidth={1.8} aria-hidden="true" />
+              </a>
+            </aside>
           </div>
 
-          {/* Right Column: Local NAP Card + Hyperlocal Neighborhood Coverage + Internal Links */}
+          {/* Right Column: Local NAP Card + Hyperlocal Neighborhood Coverage + Crawlable Internal Links */}
           <aside className="local-nap-card" aria-label="Atuação Regional e Endereço">
             <div className="local-nap-head">
               <Compass size={15} strokeWidth={1.7} aria-hidden="true" />
@@ -130,16 +178,21 @@ export function LocalSeoFaqSection({
               <p className="local-nap-subhead">Guias informativos por área</p>
               <nav className="local-internal-links" aria-label="Links internos de áreas jurídicas">
                 {ORDERED_PRACTICE_AREAS.map((areaId) => (
-                  <button
+                  <a
                     key={areaId}
-                    type="button"
+                    href={getPersonaFriendlySlug(areaId)}
                     className={`local-internal-link-chip ${
                       activePersona === areaId ? 'is-active' : ''
                     }`}
-                    onClick={() => onSelectArea(areaId, 'click')}
+                    onClick={(e) => {
+                      if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        onSelectArea(areaId, 'click');
+                      }
+                    }}
                   >
-                    {PERSONA_CONTENTS[areaId].areaLabel}
-                  </button>
+                    {PERSONA_CONTENTS[areaId].areaLabel} em {seo.cityName}
+                  </a>
                 ))}
               </nav>
             </div>

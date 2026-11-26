@@ -38,7 +38,11 @@ import {
   LegalDocumentModal,
   type LegalDocTab,
 } from './components/LegalComplianceStack';
-import { applyWhiteLabelSeoToDocument } from './lib/seoEngine';
+import {
+  applyWhiteLabelSeoToDocument,
+  getPersonaFriendlySlug,
+  resolvePersonaFromPathname,
+} from './lib/seoEngine';
 
 const COOKIE_CONSENT_STORAGE_KEY = 'adv_lgpd_cookie_consent_v1';
 
@@ -131,13 +135,35 @@ export function App() {
       if (!mounted) return;
       setProfile(profileResult.profile);
       setIsOfflineFallback(profileResult.source === 'offline');
-      await engine.bootstrap(profileResult.profile.primaryArea);
+      const pathPersona =
+        typeof window !== 'undefined'
+          ? resolvePersonaFromPathname(window.location.pathname)
+          : null;
+      await engine.bootstrap(pathPersona ?? profileResult.profile.primaryArea);
+      if (pathPersona) {
+        engine.selectAreaDirectly(
+          pathPersona,
+          `URL amigável acessada: ${PERSONA_CONTENTS[pathPersona].areaLabel}`
+        );
+      }
     }
 
+    const handlePopState = () => {
+      const pathPersona = resolvePersonaFromPathname(window.location.pathname);
+      if (pathPersona) {
+        engine.selectAreaDirectly(
+          pathPersona,
+          `Navegação de histórico: ${PERSONA_CONTENTS[pathPersona].areaLabel}`
+        );
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
     void bootstrap();
 
     return () => {
       mounted = false;
+      window.removeEventListener('popstate', handlePopState);
       unsubscribe();
       engine.stopPassiveListeners();
     };
@@ -175,6 +201,12 @@ export function App() {
           area,
           `Núcleo selecionado: ${PERSONA_CONTENTS[area].areaLabel}`
         );
+        if (typeof window !== 'undefined' && window.history?.pushState) {
+          const slug = getPersonaFriendlySlug(area);
+          if (window.location.pathname !== slug) {
+            window.history.pushState({ area }, '', slug);
+          }
+        }
         scrollSmoothToTop();
         return;
       }
@@ -314,6 +346,10 @@ export function App() {
                   src={heroPortraitSrc}
                   alt={`Advogado ${profile.lawyerName} (${profile.oabNumber}) — ${activePersonaContent.areaLabel} em ${profile.city}`}
                   className="hero-portrait-img"
+                  width={640}
+                  height={820}
+                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
                   onError={() => {
                     if (heroPortraitSrc !== '/lawyer-portrait.png') {

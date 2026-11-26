@@ -31,6 +31,9 @@ export const DEFAULT_LAWYER_PROFILE: LawyerProfile = {
     longitude: '-47.8919',
     openingHours: 'Mo-Fr 08:30-18:30',
     googleBusinessUrl: '',
+    academicBio:
+      'Especialista em Direito Processual Civil, Direito Imobiliário e Previdenciário, com atuação técnica perante o TJDFT, TRT-10, TRF-1 e Tribunais Superiores.',
+    googleVerificationCode: '',
     focusKeywords: [
       'advogado em Brasília DF',
       'advogado perto de mim Gama DF',

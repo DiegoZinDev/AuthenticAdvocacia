@@ -596,6 +596,30 @@ export function WhiteLabelModal({
                     </label>
                   </div>
 
+                  <div className="form-grid-two">
+                    <label className="field-group">
+                      <span>Mini Bio Técnica / Acadêmica (E-E-A-T Google)</span>
+                      <input
+                        type="text"
+                        value={currentSeo.academicBio ?? ''}
+                        onChange={(e) => updateSeoField('academicBio', e.target.value)}
+                        placeholder="Ex.: Pós-graduado em Direito Previdenciário e Processual Civil..."
+                      />
+                    </label>
+
+                    <label className="field-group">
+                      <span>Google Search Console (tag verification opcional)</span>
+                      <input
+                        type="text"
+                        value={currentSeo.googleVerificationCode ?? ''}
+                        onChange={(e) =>
+                          updateSeoField('googleVerificationCode', e.target.value)
+                        }
+                        placeholder="Código content do google-site-verification"
+                      />
+                    </label>
+                  </div>
+
                   {/* Checklist & Sitemap/Robots Export for Agency Delivery */}
                   <div className="seo-audit-box">
                     <ul className="seo-audit-list">
