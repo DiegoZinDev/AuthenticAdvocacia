@@ -175,7 +175,7 @@ Em conformidade estrita com o **Provimento CFOAB nº 205/2021**, **Estatuto da A
   - Exibe aviso obrigatório da **Resolução CFOAB nº 16/2026** (*triagem automatizada sem consulta ou parecer jurídico*) e exige **opt-in LGPD desmarcado por padrão** antes do encaminhamento.
 - **Compliance Stack White-Label & LGPD (`WhiteLabelModal.tsx` + `LegalComplianceStack.tsx` + `App.tsx`)**:
   - Campos White-Label ampliados com **Modalidade OAB (Art. 44 CED)** e **E-mail do Encarregado (DPO / LGPD)**.
-  - Banner de Cookies LGPD/ANPD com opções reais de **Rejeitar não essenciais**, **Gerenciar** e **Aceitar**, além de rodapé institucional com links reabríveis para **Política de Privacidade (LGPD)**, **Preferências de Cookies** e **Termos de Uso / Aviso Legal**.
+  - Banner de Cookies em linguagem simples (*"Você aceita que o site use os cookies do navegador?"*) com link direto para a política oficial de cookies do Google (`policies.google.com/technologies/cookies?hl=pt-BR`) e opções reais de **Rejeitar não essenciais**, **Gerenciar** e **Aceitar**, além de rodapé institucional com links reabríveis para **Política de Privacidade (LGPD)**, **Preferências de Cookies** e **Termos de Uso / Aviso Legal**.
 
 ---
 

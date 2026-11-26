@@ -500,7 +500,6 @@ export function App() {
         forceOpenPreferences={cookiePrefsOpen}
         onSaveConsent={handleSaveCookieConsent}
         onClosePreferences={() => setCookiePrefsOpen(false)}
-        onOpenDoc={(tab) => setActiveLegalDoc(tab)}
       />
 
       <LegalDocumentModal
