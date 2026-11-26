@@ -189,7 +189,11 @@ Baseado integralmente no **Guia Completo do SEO — 3ª Edição (Resultados Dig
   - **4 Grafos JSON-LD Estruturados (`@graph`)**: `LegalService` (NAP completo + `GeoCoordinates` + `areaServed` por cidade e bairros para buscas *"advogado perto de mim"* + `sameAs` Google Perfil da Empresa), `Attorney` (nome + OAB), `FAQPage` (Rich Snippets) e `BreadcrumbList`.
 - **FAQ Informativo Rastreável & Cobertura Hiperlocal (`frontend/src/components/LocalSeoFaqSection.tsx`)**: Perguntas frequentes em linguagem simples (zero juridiquês) adaptadas à área ativa e à cidade/bairros do cliente, cartão NAP local e linkagem interna entre os 8 núcleos jurídicos.
 - **Painel White-Label de SEO Local (`WhiteLabelModal.tsx` — Aba `SEO Local & Google`)**: Permite à agência/escritório adaptar domínio, cidade, UF, bairros atendidos, endereço, CEP, Google Maps, palavras-chave foco e overrides de Title/Description com **prévia ao vivo da SERP do Google**, **Score SEO 0–100** e **download 1-clique de `sitemap.xml` e `robots.txt`** personalizados para o cliente.
-- **Arquivos Estáticos de Rastreabilidade**: `frontend/public/robots.txt`, `frontend/public/sitemap.xml` e baseline JSON-LD/OG em `frontend/index.html`.
+- **Arquivos Estáticos de Rastreabilidade**: `frontend/public/robots.txt`, `frontend/public/sitemap.xml`, `frontend/vercel.json` (rewrite HTTP 200 para `/atuacao/:slug`) e baseline JSON-LD/OG + `<link rel="preload" as="image" fetchpriority="high">` em `frontend/index.html`.
+- **Refinamento Google Search Central & Conversion On-Page (`feat/google-eeat-crawlable-seo-v2`)**:
+  - **Links Internos Rastreáveis & Roteamento Amigável Real (`PracticeAreasSection.tsx`, `LocalSeoFaqSection.tsx`, `App.tsx`)**: Conversão dos botões de área jurídica em links reais `<a href="/atuacao/...">` com `history.pushState`, hidratação direta pelo `pathname` e suporte a `popstate`.
+  - **YMYL / E-E-A-T ("Quem, Como e Por Quê")**: Cartão visível de autoria e revisão técnica OAB (`academicBio`, `<time dateTime>`, link oficial para o **CNA/OAB** `https://cna.oab.org.br/`), breadcrumb semântico visível e grafos `WebSite` + `WebPage` (`author`, `reviewedBy`, `dateModified`) no JSON-LD.
+  - **Core Web Vitals (LCP/CLS) & Search Console**: Preload `fetchpriority="high"` + `width`/`height` na imagem Hero, campo `google-site-verification` no painel White-Label e auditoria SEO ampliada para 8 critérios (0–100).
 
 ---
 
