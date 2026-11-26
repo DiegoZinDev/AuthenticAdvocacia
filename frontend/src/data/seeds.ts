@@ -11,12 +11,13 @@ export const DEFAULT_LAWYER_PROFILE: LawyerProfile = {
   lawyerName: 'Dr. Henrique Valença',
   firmName: 'Valença & Associados — Advocacia Estratégica',
   oabNumber: 'OAB/DF 48.210',
+  practiceModel: 'sociedade_advogados',
+  dpoEmail: 'privacidade@valencaadvocacia.adv.br',
   whatsapp: '5561998421048',
   city: 'Gama & Brasília/DF',
   primaryArea: 'imobiliario',
   photoUrl: '/lawyer-portrait.png',
   experienceYears: 17,
-  solvedCasesCount: 640,
   editorialQuote:
     'Cada processo carrega um patrimônio, um vínculo familiar ou uma trajetória de trabalho. Técnica jurídica rigorosa existe para proteger o que não pode esperar.',
 };
@@ -29,29 +30,29 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
     eyebrow: 'Atuação Contenciosa e Consultiva no Distrito Federal',
     headline: 'Defesa jurídica técnica para proteger seu patrimônio, sua família e seus direitos.',
     subheadline:
-      'Atendimento reservado, análise documental minuciosa e atuação firme perante o TJDFT, TRT-10 e TRF-1 — com foco em previsibilidade e resolução célere.',
-    authorityNote: 'Parecer inicial conduzido diretamente pelo advogado titular.',
-    painSectionTitle: 'Quando a demora ou a insegurança jurídica custam caro',
+      'Atendimento reservado, análise documental minuciosa e atuação técnica perante o TJDFT, TRT-10 e TRF-1 — com foco em clareza jurídica e segurança.',
+    authorityNote: 'Atendimento inicial conduzido diretamente pelo advogado titular.',
+    painSectionTitle: 'Pontos de atenção que merecem orientação jurídica técnica',
     painPoints: [
       {
         title: 'Contratos desequilibrados e retenção indevida de valores',
         detail:
-          'Cláusulas abusivas em distratos imobiliários, planos de saúde ou relações bancárias exigem revisão técnica imediata antes da consolidação do prejuízo.',
+          'Cláusulas abusivas em distratos imobiliários, planos de saúde ou relações bancárias exigem revisão técnica cuidadosa antes da consolidação do prejuízo.',
       },
       {
-        title: 'Conflitos familiares e patrimoniais sem blindagem jurídica',
+        title: 'Conflitos familiares e patrimoniais sem planejamento jurídico',
         detail:
-          'Divórcios, pensões e inventários mal conduzidos paralisam bens por anos e geram desgaste emocional desnecessário.',
+          'Divórcios, pensões e inventários exigem condução técnica e reservada para resguardar o patrimônio e os vínculos familiares.',
       },
       {
         title: 'Direitos trabalhistas ou previdenciários negados administrativamente',
         detail:
-          'Cálculos subestimados, negativas do INSS e verbas rescisórias suprimidas demandam prova pericial precisa e tese alinhada aos tribunais superiores.',
+          'Cálculos subestimados, negativas do INSS e verbas rescisórias demandam conferência documental precisa e tese alinhada aos tribunais superiores.',
       },
     ],
     whatsappPrefill:
-      'Olá, Dr. Henrique. Gostaria de agendar uma análise jurídica confidencial do meu caso.',
-    ctaLabel: 'Solicitar Análise Estratégica',
+      'Olá, Dr. Henrique. Gostaria de agendar uma conversa inicial confidencial com o escritório.',
+    ctaLabel: 'Agendar Conversa Inicial',
     keywords: ['advogado', 'escritorio', 'brasilia', 'gama', 'oab', 'consulta', 'direito'],
     courtFocus: 'TJDFT • TRT-10 • TRF-1',
   },
@@ -60,31 +61,31 @@ export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
     areaLabel: 'Direito Imobiliário',
     badgeSubtitle: 'Direito Imobiliário — Distrato & Atraso de Obra',
     eyebrow: 'Imóveis na Planta, Distrato, Posse & Regularização no DF',
-    headline: 'Recupere valores retidos pela construtora e proteja seu patrimônio imobiliário.',
+    headline: 'Orientação técnica em contratos imobiliários, distratos e atraso na entrega de obras.',
     subheadline:
-      'Atuação especializada no TJDFT contra atrasos na entrega de obras, multas abusivas de distrato, vícios construtivos e regularização de escrituras no Distrito Federal.',
-    authorityNote: 'Súmulas 543 do STJ e jurisprudência consolidada das Turmas Cíveis do TJDFT.',
-    painSectionTitle: 'Situações críticas que resolvemos no Direito Imobiliário',
+      'Atuação especializada perante o TJDFT na análise de atrasos de obras, cláusulas de distrato, vícios construtivos e regularização de escrituras no Distrito Federal.',
+    authorityNote: 'Atuação técnica orientada pela Súmula 543 do STJ e jurisprudência das Turmas Cíveis do TJDFT.',
+    painSectionTitle: 'Pontos de atenção informativos no Direito Imobiliário',
     painPoints: [
       {
-        title: 'Construtora retendo 50% a 70% do que você já pagou no distrato',
+        title: 'Retenção elevada de valores em pedidos de distrato',
         detail:
-          'Mesmo com a Lei do Distrato, cláusulas abusivas ou culpa da incorporadora permitem reaver até 100% das parcelas com correção monetária e juros.',
+          'A Lei do Distrato e a jurisprudência definem limites específicos para retenções contratuais, especialmente quando há descumprimento atribuível à incorporadora.',
       },
       {
-        title: 'Atraso na entrega das chaves além dos 180 dias de tolerância',
+        title: 'Atraso na entrega das chaves além do prazo de tolerância',
         detail:
-          'Garantimos judicialmente a indenização por lucros cessantes (aluguel mensal equivalente ao imóvel), congelamento do saldo devedor pelo INCC e dano moral.',
+          'A análise contratual permite verificar a possibilidade de pleitear reparação por lucros cessantes e revisão de encargos durante o período de atraso.',
       },
       {
-        title: 'Imóvel sem escritura definitiva, usucapião ou cobrança de taxa SATI',
+        title: 'Imóvel sem escritura definitiva, usucapião ou taxas contratuais',
         detail:
-          'Conduzimos adjudicação compulsória, usucapião extrajudicial em cartório do DF e restituição de comissões de corretagem indevidamente transferidas ao comprador.',
+          'A regularização pode envolver adjudicação compulsória, usucapião extrajudicial em cartório do DF e conferência técnica de cláusulas de corretagem.',
       },
     ],
     whatsappPrefill:
-      'Olá, Dr. Henrique. Preciso de orientação jurídica sobre um problema imobiliário (distrato, atraso na entrega ou regularização de imóvel).',
-    ctaLabel: 'Avaliar Meu Contrato Imobiliário',
+      'Olá, Dr. Henrique. Preciso de orientação jurídica sobre um contrato imobiliário (distrato, atraso na entrega ou regularização de imóvel).',
+    ctaLabel: 'Agendar Conversa sobre Meu Contrato',
     keywords: [
       'imovel',
       'imobiliario',

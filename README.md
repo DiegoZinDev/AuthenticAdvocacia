@@ -164,6 +164,21 @@ npm run start           # Inicia servidor único em http://localhost:3002
 
 ---
 
+## 7.1 Blindagem OAB (Provimento nº 205/2021) & Formulário Adaptativo de Triagem Informativa (`feat/oab-compliant-adaptive-triage`)
+
+Em conformidade estrita com o **Provimento CFOAB nº 205/2021**, **Estatuto da Advocacia (Lei nº 8.906/1994)**, **Código de Ética e Disciplina**, **Resolução CFOAB nº 16/2026 (IA na Advocacia)**, **LGPD (Lei nº 13.709/2018)**, **Guia de Cookies da ANPD**, **Marco Civil da Internet** e **LBI/WCAG 2.1 AA**:
+
+- **Remoção Definitiva dos Cards de Casos Resolvidos (`SuccessCasesSection.tsx`)**: Removidos os cards de precedentes/resultados obtidos e os KPIs mercantilistas (`640+ Casos Resolvidos` e `Tempo Médio de Liminar 24h a 72h` em `AuthorityPainSection.tsx`), substituídos por apresentação sóbria de credenciais, jurisdição e etapas de atendimento conduzidas pelo advogado titular.
+- **Formulário Adaptativo de Triagem Informativa (`frontend/src/lib/adaptiveTriageEngine.ts` + `frontend/src/components/AdaptiveTriageSection.tsx`)**:
+  - Consome as pistas contextuais do `PredictiveIntentEngine` (`originSummary`, `deductionHeadline`, `signals`, `telemetry`) — como faixa etária inferida (ex.: `57 anos` → pergunta informativa *"Possui mais de 56 anos de idade?"*), sintomas/limitações físicas (`dor nas pernas`, `coluna`, `laudos`) ou contexto contratual/bancário — e gera perguntas em etapas com **viés de confirmação informativo e sóbrio** para todas as 9 áreas jurídicas.
+  - Constrói em tempo real um **Resumo Informativo + Checklist de Documentos Úteis** e integra todas as respostas coletadas no dossiê pré-contratual confidencial encaminhado ao WhatsApp do advogado titular.
+  - Exibe aviso obrigatório da **Resolução CFOAB nº 16/2026** (*triagem automatizada sem consulta ou parecer jurídico*) e exige **opt-in LGPD desmarcado por padrão** antes do encaminhamento.
+- **Compliance Stack White-Label & LGPD (`WhiteLabelModal.tsx` + `LegalComplianceStack.tsx` + `App.tsx`)**:
+  - Campos White-Label ampliados com **Modalidade OAB (Art. 44 CED)** e **E-mail do Encarregado (DPO / LGPD)**.
+  - Banner de Cookies LGPD/ANPD com opções reais de **Rejeitar não essenciais**, **Gerenciar** e **Aceitar**, além de rodapé institucional com links reabríveis para **Política de Privacidade (LGPD)**, **Preferências de Cookies** e **Termos de Uso / Aviso Legal**.
+
+---
+
 ## 8. Governança de Documentação
 
 Este repositório segue governança estrita contendo **exclusivamente 2 arquivos de documentação**:

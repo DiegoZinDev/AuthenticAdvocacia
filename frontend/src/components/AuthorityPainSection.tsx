@@ -29,9 +29,9 @@ export function AuthorityPainSection({
     >
       <div className="editorial-container">
         <div className="authority-split-grid">
-          {/* Left Column: Contextual Pain Points */}
+          {/* Left Column: Contextual Informative Points */}
           <div className="pain-column">
-            <p className="editorial-eyebrow">Diagnóstico Jurídico Imediato</p>
+            <p className="editorial-eyebrow">Orientação Informativa &amp; Pontos de Atenção</p>
             <AnimatePresence mode="wait">
               <motion.h2
                 key={`pain-title-${personaId}`}
@@ -69,15 +69,15 @@ export function AuthorityPainSection({
             </AnimatePresence>
           </div>
 
-          {/* Right Column: Painel Editorial de Métricas & Jurisdição */}
+          {/* Right Column: Sober Credentials, Jurisdiction & Ethical Method Panel */}
           <aside
             className="editorial-metrics-panel"
-            aria-label="Painel Editorial de Métricas e Jurisdição"
+            aria-label="Credenciais, Jurisdição e Método de Atendimento"
           >
             <div className="metrics-panel-header">
               <div className="metrics-panel-eyebrow">
                 <Scale size={14} strokeWidth={1.6} aria-hidden="true" />
-                <span>Jurisdição &amp; Desempenho</span>
+                <span>Jurisdição &amp; Método de Atuação</span>
               </div>
               <div className="court-badges-strip" aria-label="Tribunais de atuação">
                 {JURISDICTION_COURTS.map((court) => (
@@ -90,18 +90,33 @@ export function AuthorityPainSection({
 
             <div className="metrics-panel-kpis">
               <div className="panel-kpi-cell">
-                <span className="panel-kpi-value">{profile.experienceYears}+</span>
-                <span className="panel-kpi-label">Anos de Atuação</span>
+                <span className="panel-kpi-value">{profile.experienceYears} anos</span>
+                <span className="panel-kpi-label">Experiência Profissional</span>
               </div>
               <div className="panel-kpi-cell">
-                <span className="panel-kpi-value">{profile.solvedCasesCount}+</span>
-                <span className="panel-kpi-label">Casos Resolvidos</span>
+                <span className="panel-kpi-value">100%</span>
+                <span className="panel-kpi-label">Condução pelo Titular</span>
               </div>
               <div className="panel-kpi-cell">
-                <span className="panel-kpi-value">24h a 72h</span>
-                <span className="panel-kpi-label">Tempo Médio de Liminar</span>
+                <span className="panel-kpi-value">Art. 7º</span>
+                <span className="panel-kpi-label">Sigilo Estatutário OAB</span>
               </div>
             </div>
+
+            <ol className="method-steps-list" aria-label="Etapas do atendimento">
+              <li>
+                <strong>1. Triagem Informativa:</strong> organização inicial do contexto e
+                checklist documental.
+              </li>
+              <li>
+                <strong>2. Atendimento Reservado:</strong> análise individualizada conduzida
+                diretamente pelo advogado titular.
+              </li>
+              <li>
+                <strong>3. Orientação Técnica:</strong> esclarecimento claro sobre vias
+                administrativas ou judiciais cabíveis.
+              </li>
+            </ol>
 
             <blockquote className="editorial-quote metrics-panel-quote">
               <p>“{profile.editorialQuote}”</p>
@@ -121,7 +136,7 @@ export function AuthorityPainSection({
             <div className="metrics-panel-guarantees">
               <div className="guarantee-line">
                 <ShieldCheck size={15} strokeWidth={1.6} aria-hidden="true" />
-                <span>Análise estratégica direta com o sócio titular, sem robôs</span>
+                <span>Análise técnica conduzida pessoalmente pelo advogado inscrito na OAB</span>
               </div>
             </div>
 
@@ -132,11 +147,11 @@ export function AuthorityPainSection({
               className="btn-primary-gold full-width"
             >
               <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
-              <span>{persona.ctaLabel}</span>
+              <span>Falar com o Escritório</span>
             </a>
 
             <p className="whatsapp-preview-caption">
-              Dossiê pré-estruturado para <strong>{persona.areaLabel}</strong>.
+              Atendimento informativo e reservado para <strong>{persona.areaLabel}</strong>.
             </p>
           </aside>
         </div>
