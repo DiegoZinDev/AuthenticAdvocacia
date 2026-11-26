@@ -1270,13 +1270,13 @@ export function buildInformativeTriageBrief(
 
   const summaryTitle =
     answeredCount > 0
-      ? `Triagem estruturada em ${persona.areaLabel}`
-      : `Guia informativo inicial — ${persona.areaLabel}`;
+      ? `Resumo do seu atendimento — ${persona.areaLabel}`
+      : `Guia inicial — ${persona.areaLabel}`;
 
   const summaryText =
     answeredCount > 0
-      ? `Organizamos ${answeredCount} ponto(s) informado(s) por você para facilitar uma primeira conversa objetiva e reservada com o advogado titular.`
-      : `Responda às perguntas ao lado para organizar as informações do seu contexto antes de conversar com o escritório.`;
+      ? `Reunimos ${answeredCount} ponto(s) informado(s) por você para facilitar uma primeira conversa objetiva e reservada com o advogado titular.`
+      : `Responda às perguntas ao lado para nos contar brevemente o que está acontecendo antes de falar com o escritório.`;
 
   return {
     areaLabel: persona.areaLabel,
@@ -1284,6 +1284,6 @@ export function buildInformativeTriageBrief(
     summaryText,
     documentChecklist: DOCUMENT_CHECKLIST_BY_PERSONA[personaId],
     ethicalNextStepNote:
-      'Este resumo tem caráter estritamente informativo e organizacional. A análise jurídica individualizada é realizada exclusivamente pelo advogado titular em atendimento reservado.',
+      'Informações de caráter orientativo. A análise do seu caso é conduzida pessoalmente pelo advogado titular em atendimento reservado.',
   };
 }

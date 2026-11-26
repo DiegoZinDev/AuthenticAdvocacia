@@ -9,13 +9,11 @@ import {
   MessageCircle,
   RotateCcw,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import { ORDERED_PRACTICE_AREAS, PERSONA_CONTENTS } from '../data/seeds';
 import {
   buildAdaptiveTriageQuestions,
   buildInformativeTriageBrief,
-  extractContextClues,
 } from '../lib/adaptiveTriageEngine';
 import {
   LEGAL_ALERT_BY_PERSONA,
@@ -55,7 +53,7 @@ export function AdaptiveTriageSection({
   const [additionalNote, setAdditionalNote] = useState<string>('');
   const [lgpdAccepted, setLgpdAccepted] = useState<boolean>(false);
 
-  // Reset questionnaire cleanly whenever the detected persona changes
+  // Reset questionnaire cleanly whenever the active area changes
   useEffect(() => {
     setAnswersMap({});
     setCurrentStep(0);
@@ -64,8 +62,6 @@ export function AdaptiveTriageSection({
     setLgpdAccepted(false);
     onTriageChange([], '');
   }, [contextState.activePersona, onTriageChange]);
-
-  const clues = useMemo(() => extractContextClues(contextState), [contextState]);
 
   const questions = useMemo(
     () => buildAdaptiveTriageQuestions(contextState, answersMap),
@@ -132,7 +128,7 @@ export function AdaptiveTriageSection({
     if (option.signalWeight && option.signalWeight > 0) {
       onRecordTriageSignal(
         contextState.activePersona,
-        `Triagem informativa: ${option.dossierTag}`,
+        `Atendimento inicial: ${option.dossierTag}`,
         option.signalWeight
       );
     }
@@ -165,49 +161,36 @@ export function AdaptiveTriageSection({
       <div className="editorial-container">
         <div className="triage-section-header">
           <div>
-            <p className="editorial-eyebrow">Triagem Informativa Adaptativa • Provimento OAB nº 205/2021</p>
+            <p className="editorial-eyebrow">Atendimento Inicial • Sigilo Profissional</p>
             <h2 id="triage-section-heading" className="section-title">
-              Organize seu contexto em poucas perguntas objetivas
+              Queremos entender melhor o seu problema. Conte-nos um pouco mais
             </h2>
-          </div>
-
-          <div className="triage-context-pills" aria-label="Pistas contextuais consideradas">
-            <span className="triage-context-caption">
-              <Sparkles size={13} strokeWidth={1.7} aria-hidden="true" />
-              <span>Perguntas adaptadas ao tema:</span>
-            </span>
-            {clues.readableClueTags.map((tag) => (
-              <span key={tag} className="triage-clue-chip">
-                {tag}
-              </span>
-            ))}
           </div>
         </div>
 
-        {/* Mandatory OAB Res. 16/2026 & Prov. 205/2021 AI/Automation Disclosure */}
+        {/* Discreet mandatory OAB Res. 16/2026 disclosure */}
         <div className="triage-compliance-banner" role="note">
           <Info size={16} strokeWidth={1.7} aria-hidden="true" />
           <p>
-            <strong>Aviso de Triagem Inicial:</strong> Este questionário é um atendimento automatizado
-            para organização preliminar de informações e agendamento.{' '}
-            <strong>Não constitui consulta, diagnóstico ou parecer jurídico</strong> — toda análise
-            técnica é conduzida exclusivamente pelo advogado titular sob supervisão humana.
+            Atendimento inicial automatizado para organizar suas informações e agilizar o
+            agendamento. <strong>Não substitui consulta ou parecer jurídico</strong> — toda análise
+            é realizada pessoalmente pelo advogado titular.
           </p>
         </div>
 
         <div className="triage-layout-grid">
-          {/* Left Column: Adaptive Confirmation-Bias Questionnaire */}
+          {/* Left Column: Questionnaire */}
           <div className="triage-card-surface">
             <div className="triage-progress-header">
               <div className="triage-progress-meta">
                 <span className="triage-step-indicator">
                   {showAreaPicker
-                    ? 'Selecionar Área de Interesse'
+                    ? 'Escolha o Assunto'
                     : isCompleted
-                      ? 'Triagem Inicial Concluída'
-                      : `Etapa ${currentStep + 1} de ${questions.length}`}
+                      ? 'Pronto para enviar'
+                      : `Pergunta ${currentStep + 1} de ${questions.length}`}
                 </span>
-                <span className="triage-progress-pct">{progressPercent}% preenchido</span>
+                <span className="triage-progress-pct">{progressPercent}% concluído</span>
               </div>
               <div
                 className="triage-progress-track"
@@ -234,13 +217,12 @@ export function AdaptiveTriageSection({
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <p className="triage-step-tag">Adaptação de Núcleo</p>
+                  <p className="triage-step-tag">Assunto</p>
                   <h3 className="triage-question-prompt">
                     Qual área do Direito melhor representa a sua dúvida hoje?
                   </h3>
                   <p className="triage-question-hint">
-                    Ao selecionar o tema abaixo, o questionário será reconfigurado instantaneamente com
-                    perguntas informativas adequadas.
+                    Selecione o tema abaixo para ver as perguntas e orientações correspondentes.
                   </p>
 
                   <div className="triage-area-grid">
@@ -332,7 +314,7 @@ export function AdaptiveTriageSection({
                         className="triage-ghost-btn"
                         onClick={() => setShowAreaPicker(true)}
                       >
-                        <span>Trocar área jurídica</span>
+                        <span>Escolher outro assunto</span>
                       </button>
                     )}
 
@@ -342,7 +324,7 @@ export function AdaptiveTriageSection({
                         className="triage-ghost-btn"
                         onClick={() => setCurrentStep(questions.length)}
                       >
-                        <span>Ir para o resumo</span>
+                        <span>Ir para o envio</span>
                       </button>
                     )}
                   </div>
@@ -358,10 +340,10 @@ export function AdaptiveTriageSection({
                 >
                   <div className="triage-done-badge">
                     <CheckCircle2 size={16} strokeWidth={1.9} aria-hidden="true" />
-                    <span>Informações preliminares organizadas</span>
+                    <span>Informações organizadas</span>
                   </div>
                   <h3 className="triage-question-prompt">
-                    Seu resumo informativo está pronto para encaminhamento reservado
+                    Tudo pronto para conversar com o escritório
                   </h3>
                   <p className="triage-question-hint">
                     Ao enviar, o advogado titular receberá os pontos marcados abaixo para preparar uma
@@ -369,7 +351,7 @@ export function AdaptiveTriageSection({
                   </p>
 
                   <label className="triage-note-field">
-                    <span>Observação breve (opcional — não inclua senhas ou dados bancários)</span>
+                    <span>Quer acrescentar algum detalhe? (opcional — não inclua senhas ou dados bancários)</span>
                     <textarea
                       rows={3}
                       maxLength={220}
@@ -387,17 +369,17 @@ export function AdaptiveTriageSection({
                       onChange={(e) => setLgpdAccepted(e.target.checked)}
                     />
                     <span>
-                      Declaro ciência de que esta triagem possui caráter meramente informativo (sem
-                      parecer jurídico automatizado) e autorizo o encaminhamento destes dados mínimos ao
-                      escritório para contato pré-contratual, conforme a{' '}
+                      Estou ciente de que este envio tem caráter informativo (sem parecer jurídico
+                      automatizado) e autorizo o contato do escritório sob sigilo profissional,
+                      conforme a{' '}
                       <button
                         type="button"
                         className="triage-inline-link"
                         onClick={onOpenPrivacyPolicy}
                       >
-                        Política de Privacidade (LGPD)
-                      </button>{' '}
-                      e sob sigilo profissional (Art. 7º do Estatuto da OAB).
+                        Política de Privacidade
+                      </button>
+                      .
                     </span>
                   </label>
 
@@ -410,7 +392,7 @@ export function AdaptiveTriageSection({
                         className="btn-primary-gold full-width"
                       >
                         <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
-                        <span>Encaminhar Triagem para o Escritório</span>
+                        <span>Enviar e falar com o escritório</span>
                       </a>
                     ) : (
                       <button
@@ -420,7 +402,7 @@ export function AdaptiveTriageSection({
                         aria-disabled="true"
                       >
                         <ShieldCheck size={17} strokeWidth={1.8} aria-hidden="true" />
-                        <span>Marque a ciência LGPD acima para encaminhar</span>
+                        <span>Confirme a caixa acima para enviar</span>
                       </button>
                     )}
 
@@ -435,7 +417,7 @@ export function AdaptiveTriageSection({
                       </button>
                       <button type="button" className="triage-ghost-btn" onClick={handleReset}>
                         <RotateCcw size={14} strokeWidth={1.7} aria-hidden="true" />
-                        <span>Reiniciar triagem</span>
+                        <span>Recomeçar</span>
                       </button>
                     </div>
                   </div>
@@ -444,8 +426,8 @@ export function AdaptiveTriageSection({
             </AnimatePresence>
           </div>
 
-          {/* Right Column: Live Informative Brief & Document Checklist */}
-          <aside className="triage-brief-panel" aria-label="Resumo informativo e documentos úteis">
+          {/* Right Column: Live Summary & Document Checklist */}
+          <aside className="triage-brief-panel" aria-label="Resumo e documentos úteis">
             <div className="triage-brief-head">
               <ClipboardList size={15} strokeWidth={1.7} aria-hidden="true" />
               <span>{brief.summaryTitle}</span>
@@ -454,7 +436,7 @@ export function AdaptiveTriageSection({
 
             {orderedAnswers.length > 0 && (
               <div className="triage-captured-block">
-                <p className="triage-subhead">Pontos registrados por você</p>
+                <p className="triage-subhead">O que você nos contou</p>
                 <ul className="triage-captured-list">
                   {orderedAnswers.map((ans) => (
                     <li key={ans.questionId}>
@@ -469,7 +451,7 @@ export function AdaptiveTriageSection({
             <div className="triage-checklist-block">
               <p className="triage-subhead">
                 <FileText size={13} strokeWidth={1.7} aria-hidden="true" />
-                <span>Documentos úteis para separar</span>
+                <span>Documentos que podem ajudar na conversa</span>
               </p>
               <ul className="triage-checklist-items">
                 {brief.documentChecklist.map((doc) => (

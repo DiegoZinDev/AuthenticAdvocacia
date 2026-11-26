@@ -1061,7 +1061,7 @@ export function buildWhatsAppTriageDossier(
   ];
 
   if (triageAnswers && triageAnswers.length > 0) {
-    lines.push('Resumo da triagem informativa:');
+    lines.push('Resumo inicial:');
     for (const item of triageAnswers) {
       lines.push(`• ${item.dossierTag}`);
     }
@@ -1075,7 +1075,7 @@ export function buildWhatsAppTriageDossier(
   lines.push(
     `Período de acesso: ${state.accessPeriod} • Prioridade: ${urgencyLabel}.`
   );
-  lines.push('[Triagem Inicial Informativa — Pré-atendimento sob Sigilo Profissional]');
+  lines.push('[Atendimento Inicial • Canal Oficial do Site]');
 
   const text = lines.join('\n');
   return {

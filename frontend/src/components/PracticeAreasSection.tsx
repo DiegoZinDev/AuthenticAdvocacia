@@ -37,8 +37,8 @@ export function PracticeAreasSection({
           </div>
           <div className="section-header-aside">
             <p className="section-aside-copy">
-              Selecione uma área jurídica abaixo. A triagem informativa, as orientações técnicas e
-              as dúvidas frequentes se adaptam imediatamente ao tema escolhido.
+              Selecione uma área abaixo para consultar as principais orientações, documentos úteis
+              e dúvidas frequentes sobre o assunto.
             </p>
           </div>
         </div>
