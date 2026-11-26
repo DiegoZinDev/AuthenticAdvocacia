@@ -9,17 +9,25 @@ export type PersonaId =
   | 'empresarial'
   | 'criminal';
 
+export type LegalPracticeModel =
+  | 'advogado_autonomo'
+  | 'sociedade_individual'
+  | 'sociedade_advogados';
+
 export interface LawyerProfile {
   id: string;
   lawyerName: string;
   firmName: string;
   oabNumber: string;
+  practiceModel?: LegalPracticeModel;
+  dpoEmail?: string;
   whatsapp: string;
   city: string;
   primaryArea: PersonaId;
   photoUrl: string;
   experienceYears: number;
-  solvedCasesCount: number;
+  /** @deprecated Mantido apenas para compatibilidade legada de schema; não exibido na UI (Prov. 205/2021). */
+  solvedCasesCount?: number;
   editorialQuote: string;
   updatedAt?: string;
 }
@@ -56,6 +64,41 @@ export interface LegalCase {
   metricBadge: string;
   timeframe: string;
   displayOrder: number;
+}
+
+export interface AdaptiveTriageOption {
+  id: string;
+  label: string;
+  helper?: string;
+  /** Semantic tag recorded for the lawyer's triage dossier */
+  dossierTag: string;
+  /** Optional persona redirection if the lead indicates another area */
+  redirectToAreaPicker?: boolean;
+  /** Optional boost to confidence/context */
+  signalWeight?: number;
+}
+
+export interface AdaptiveTriageQuestion {
+  id: string;
+  stepTag: string;
+  prompt: string;
+  rationaleHint: string;
+  options: AdaptiveTriageOption[];
+}
+
+export interface AdaptiveTriageAnswer {
+  questionId: string;
+  questionPrompt: string;
+  optionId: string;
+  optionLabel: string;
+  dossierTag: string;
+}
+
+export interface CookieConsentPreferences {
+  essential: true;
+  analyticsAndContext: boolean;
+  decided: boolean;
+  updatedAt?: string;
 }
 
 export interface PersonaScores {

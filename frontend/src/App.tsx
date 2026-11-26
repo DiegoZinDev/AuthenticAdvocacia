@@ -8,36 +8,73 @@ import {
   Shield,
   Scale,
 } from 'lucide-react';
-import { DEFAULT_LAWYER_PROFILE, LEGAL_CASES, PERSONA_CONTENTS } from './data/seeds';
+import { DEFAULT_LAWYER_PROFILE, PERSONA_CONTENTS } from './data/seeds';
 import {
   PredictiveIntentEngine,
   buildWhatsAppTriageDossier,
 } from './lib/predictiveIntentEngine';
 import {
-  getCasesForPersona,
   loadProfileWithFallback,
   resetProfileWithFallback,
   saveProfileWithFallback,
 } from './lib/offlineStore';
 import type {
+  AdaptiveTriageAnswer,
   ContextState,
+  CookieConsentPreferences,
   LawyerProfile,
   LeadOriginPreset,
-  LegalCase,
   PersonaId,
 } from './types/legal';
 import { KineticHeadline } from './components/KineticHeadline';
-import { SuccessCasesSection } from './components/SuccessCasesSection';
+import { AdaptiveTriageSection } from './components/AdaptiveTriageSection';
 import { PracticeAreasSection } from './components/PracticeAreasSection';
 import { AuthorityPainSection } from './components/AuthorityPainSection';
 import { WhiteLabelModal } from './components/WhiteLabelModal';
 import { LeadOriginSimulator } from './components/LeadOriginSimulator';
+import {
+  CookieConsentBanner,
+  LegalDocumentModal,
+  type LegalDocTab,
+} from './components/LegalComplianceStack';
 
-function getLocalCasesStrictlyForPersona(personaId: PersonaId): LegalCase[] {
-  const target: PersonaId = personaId === 'geral' ? 'imobiliario' : personaId;
-  return LEGAL_CASES.filter((item) => item.personaId === target)
-    .sort((a, b) => a.displayOrder - b.displayOrder)
-    .slice(0, 3);
+const COOKIE_CONSENT_STORAGE_KEY = 'adv_lgpd_cookie_consent_v1';
+
+function loadCookieConsent(): CookieConsentPreferences {
+  try {
+    if (typeof localStorage === 'undefined') {
+      return { essential: true, analyticsAndContext: false, decided: false };
+    }
+    const raw = localStorage.getItem(COOKIE_CONSENT_STORAGE_KEY);
+    if (!raw) return { essential: true, analyticsAndContext: false, decided: false };
+    const parsed = JSON.parse(raw) as Partial<CookieConsentPreferences>;
+    return {
+      essential: true,
+      analyticsAndContext: Boolean(parsed.analyticsAndContext),
+      decided: Boolean(parsed.decided),
+      updatedAt: parsed.updatedAt,
+    };
+  } catch {
+    return { essential: true, analyticsAndContext: false, decided: false };
+  }
+}
+
+function saveCookieConsent(analyticsAndContext: boolean): CookieConsentPreferences {
+  const next: CookieConsentPreferences = {
+    essential: true,
+    analyticsAndContext,
+    decided: true,
+    updatedAt: new Date().toISOString(),
+  };
+  try {
+    localStorage.setItem(COOKIE_CONSENT_STORAGE_KEY, JSON.stringify(next));
+    if (!analyticsAndContext) {
+      document.cookie = 'adv_autoseller_ctx=; path=/; max-age=0; SameSite=Lax';
+    }
+  } catch {
+    // Storage restricted
+  }
+  return next;
 }
 
 function scrollSmoothToTop(): void {
@@ -57,12 +94,15 @@ export function App() {
   const [contextState, setContextState] = useState<ContextState>(() =>
     engineRef.current!.getState()
   );
-  const [cases, setCases] = useState<LegalCase[]>(() =>
-    getLocalCasesStrictlyForPersona(engineRef.current!.getState().activePersona)
-  );
   const [whiteLabelOpen, setWhiteLabelOpen] = useState(false);
   const [heroPortraitFallback, setHeroPortraitFallback] = useState(false);
-  const [focusedCase, setFocusedCase] = useState<LegalCase | null>(null);
+  const [triageAnswers, setTriageAnswers] = useState<AdaptiveTriageAnswer[]>([]);
+  const [triageNote, setTriageNote] = useState<string>('');
+  const [cookieConsent, setCookieConsent] = useState<CookieConsentPreferences>(() =>
+    loadCookieConsent()
+  );
+  const [cookiePrefsOpen, setCookiePrefsOpen] = useState(false);
+  const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocTab | null>(null);
 
   const sectionTimerRef = useRef<Record<string, number>>({});
 
@@ -70,11 +110,7 @@ export function App() {
     setHeroPortraitFallback(false);
   }, [profile.photoUrl]);
 
-  useEffect(() => {
-    setFocusedCase(null);
-  }, [contextState.activePersona]);
-
-  // Subscribe to PredictiveIntentEngine + start passive TikTok-style listeners
+  // Subscribe to PredictiveIntentEngine + start passive listeners only if allowed or in-memory
   useEffect(() => {
     const engine = engineRef.current!;
     const unsubscribe = engine.subscribe((nextState) => {
@@ -100,26 +136,6 @@ export function App() {
     };
   }, []);
 
-  // Synchronously guarantee 100% coherent cases for the active persona (zero mixing!)
-  // then optionally hydrate from backend API if reachable and strictly matching
-  useEffect(() => {
-    const targetPersona = contextState.activePersona;
-    setCases(getLocalCasesStrictlyForPersona(targetPersona));
-
-    let current = true;
-    void getCasesForPersona(targetPersona).then((remoteCases) => {
-      if (!current) return;
-      const strictlyMatched = remoteCases.filter((c) => c.personaId === targetPersona);
-      if (strictlyMatched.length === 3) {
-        setCases(strictlyMatched);
-      }
-    });
-
-    return () => {
-      current = false;
-    };
-  }, [contextState.activePersona]);
-
   const activePersonaContent = useMemo(
     () => PERSONA_CONTENTS[contextState.activePersona],
     [contextState.activePersona]
@@ -131,9 +147,10 @@ export function App() {
         profile.whatsapp,
         profile.lawyerName,
         contextState,
-        focusedCase
+        triageAnswers,
+        triageNote
       ),
-    [profile.whatsapp, profile.lawyerName, contextState, focusedCase]
+    [profile.whatsapp, profile.lawyerName, contextState, triageAnswers, triageNote]
   );
   const whatsappUrl = whatsappDossier.url;
 
@@ -143,8 +160,6 @@ export function App() {
     return trimmed && trimmed.length > 0 ? trimmed : '/lawyer-portrait.png';
   }, [heroPortraitFallback, profile.photoUrl]);
 
-  // Clicking a Practice Area immediately rewrites global state and smoothly scrolls to top;
-  // hovering feeds passive dwell scoring into PredictiveIntentEngine
   const handleSelectPracticeArea = useCallback(
     (area: PersonaId, source: 'hover' | 'click') => {
       const engine = engineRef.current!;
@@ -167,7 +182,26 @@ export function App() {
     []
   );
 
-  // Section reading dwell signal
+  const handleRecordTriageSignal = useCallback(
+    (personaId: PersonaId, detail: string, weight: number) => {
+      engineRef.current?.recordPassiveSignal({
+        source: 'click',
+        personaId,
+        weight,
+        detail,
+      });
+    },
+    []
+  );
+
+  const handleTriageChange = useCallback(
+    (answers: AdaptiveTriageAnswer[], note: string) => {
+      setTriageAnswers(answers);
+      setTriageNote(note);
+    },
+    []
+  );
+
   const handleSectionVisible = useCallback((persona: PersonaId) => {
     if (sectionTimerRef.current[persona]) return;
     sectionTimerRef.current[persona] = window.setTimeout(() => {
@@ -175,15 +209,19 @@ export function App() {
         source: 'scroll',
         personaId: persona,
         weight: 10,
-        detail: `Leitura aprofundada (${PERSONA_CONTENTS[persona].areaLabel})`,
+        detail: `Leitura informativa (${PERSONA_CONTENTS[persona].areaLabel})`,
       });
     }, 3200);
   }, []);
 
-  // Discreet bottom-left simulator injects search signal + scrolls smoothly to top
   const handleSimulateOrigin = useCallback((preset: LeadOriginPreset) => {
     engineRef.current?.injectSimulatedSearch(preset);
-    scrollSmoothToTop();
+    const triageEl = document.getElementById('triagem-adaptativa');
+    if (triageEl) {
+      triageEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      scrollSmoothToTop();
+    }
   }, []);
 
   const handleSaveProfile = useCallback(async (nextProfile: LawyerProfile) => {
@@ -198,6 +236,12 @@ export function App() {
     setProfile(result.profile);
     setIsOfflineFallback(!result.synced);
   }, []);
+
+  const handleSaveCookieConsent = useCallback((analyticsAndContext: boolean) => {
+    setCookieConsent(saveCookieConsent(analyticsAndContext));
+  }, []);
+
+  const dpoEmail = profile.dpoEmail?.trim() || 'privacidade@valencaadvocacia.adv.br';
 
   return (
     <div className="editorial-app">
@@ -217,9 +261,9 @@ export function App() {
           </a>
 
           <nav className="masthead-nav" aria-label="Navegação principal">
-            <a href="#casos-resolvidos">Casos Resolvidos</a>
-            <a href="#autoridade">Diagnóstico</a>
-            <a href="#areas-atuacao">Núcleos</a>
+            <a href="#triagem-adaptativa">Triagem Informativa</a>
+            <a href="#autoridade">Orientações</a>
+            <a href="#areas-atuacao">Áreas de Atuação</a>
           </nav>
 
           <div className="masthead-actions">
@@ -230,7 +274,7 @@ export function App() {
               className="masthead-cta-link"
             >
               <MessageCircle size={15} strokeWidth={1.7} aria-hidden="true" />
-              <span>Atendimento Direto</span>
+              <span>Falar com o Escritório</span>
             </a>
 
             <button
@@ -289,12 +333,8 @@ export function App() {
                     >
                       <span className="live-context-dot" aria-hidden="true" />
                       <span className="live-context-label">
-                        Contexto identificado:{' '}
+                        Tema em foco:{' '}
                         <strong>{activePersonaContent.badgeSubtitle}</strong>
-                        <span className="live-context-score">
-                          {' '}
-                          • {Math.round(contextState.confidence * 100)}%
-                        </span>
                       </span>
                     </motion.div>
                   </AnimatePresence>
@@ -315,19 +355,19 @@ export function App() {
                   />
 
                   <div className="hero-cta-row">
+                    <a href="#triagem-adaptativa" className="btn-primary-gold">
+                      <span>Iniciar Triagem Informativa</span>
+                      <ArrowDown size={15} strokeWidth={1.8} aria-hidden="true" />
+                    </a>
+
                     <a
                       href={whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-primary-gold"
+                      className="btn-secondary-ink"
                     >
-                      <MessageCircle size={17} strokeWidth={1.8} aria-hidden="true" />
-                      <span>{activePersonaContent.ctaLabel}</span>
-                    </a>
-
-                    <a href="#casos-resolvidos" className="btn-secondary-ink">
-                      <span>Ver casos idênticos resolvidos</span>
-                      <ArrowDown size={15} strokeWidth={1.7} aria-hidden="true" />
+                      <MessageCircle size={16} strokeWidth={1.7} aria-hidden="true" />
+                      <span>Agendar conversa</span>
                     </a>
                   </div>
                 </div>
@@ -348,7 +388,7 @@ export function App() {
                       <dd>{profile.oabNumber}</dd>
                     </div>
                     <div>
-                      <dt>Foco em Tempo Real</dt>
+                      <dt>Área em Destaque</dt>
                       <dd>{activePersonaContent.areaLabel}</dd>
                     </div>
                     <div>
@@ -366,19 +406,19 @@ export function App() {
           </div>
         </section>
 
-        {/* FIRST FOLD PRIORITY: Precedents & Documented Results IMMEDIATELY below Hero */}
-        <SuccessCasesSection
-          personaId={contextState.activePersona}
-          cases={cases}
-          whatsappUrl={whatsappUrl}
+        {/* FIRST FOLD PRIORITY: OAB-Compliant Adaptive Confirmation-Bias Triage Form */}
+        <AdaptiveTriageSection
           contextState={contextState}
           lawyerName={profile.lawyerName}
           lawyerWhatsapp={profile.whatsapp}
-          onFocusCase={setFocusedCase}
+          onSelectArea={handleSelectPracticeArea}
+          onTriageChange={handleTriageChange}
+          onRecordTriageSignal={handleRecordTriageSignal}
+          onOpenPrivacyPolicy={() => setActiveLegalDoc('privacidade')}
           onSectionVisible={handleSectionVisible}
         />
 
-        {/* Contextual Pain Points & Lawyer Authority Portrait */}
+        {/* Contextual Informative Points & Sober Credentials */}
         <AuthorityPainSection
           profile={profile}
           personaId={contextState.activePersona}
@@ -393,7 +433,7 @@ export function App() {
         />
       </main>
 
-      {/* Editorial Footer */}
+      {/* Editorial Footer — Full OAB Prov. 205/2021 + LGPD + Marco Civil Compliance Stack */}
       <footer className="editorial-footer">
         <div className="editorial-container footer-main-grid">
           <div>
@@ -401,12 +441,39 @@ export function App() {
             <p className="footer-sub">
               {profile.lawyerName} • {profile.oabNumber} • {profile.city}
             </p>
+            <p className="footer-dpo-line">
+              Encarregado de Dados (DPO / LGPD): <span>{dpoEmail}</span>
+            </p>
           </div>
 
           <div className="footer-right-note">
+            <nav className="footer-legal-links" aria-label="Documentos legais e privacidade">
+              <button
+                type="button"
+                className="footer-legal-link-btn"
+                onClick={() => setActiveLegalDoc('privacidade')}
+              >
+                Política de Privacidade (LGPD)
+              </button>
+              <button
+                type="button"
+                className="footer-legal-link-btn"
+                onClick={() => setCookiePrefsOpen(true)}
+              >
+                Preferências de Cookies
+              </button>
+              <button
+                type="button"
+                className="footer-legal-link-btn"
+                onClick={() => setActiveLegalDoc('termos')}
+              >
+                Termos de Uso &amp; Aviso Legal
+              </button>
+            </nav>
             <p>
-              Conteúdo informativo e institucional em conformidade com o Provimento nº 205/2021 do
-              Conselho Federal da OAB.
+              Este site tem caráter meramente informativo e institucional, em conformidade com o
+              Código de Ética e Disciplina da OAB, o Provimento CFOAB nº 205/2021 e a Resolução
+              CFOAB nº 16/2026.
             </p>
           </div>
         </div>
@@ -426,6 +493,22 @@ export function App() {
         onClose={() => setWhiteLabelOpen(false)}
         onSave={handleSaveProfile}
         onReset={handleResetProfile}
+      />
+
+      <CookieConsentBanner
+        consent={cookieConsent}
+        forceOpenPreferences={cookiePrefsOpen}
+        onSaveConsent={handleSaveCookieConsent}
+        onClosePreferences={() => setCookiePrefsOpen(false)}
+        onOpenDoc={(tab) => setActiveLegalDoc(tab)}
+      />
+
+      <LegalDocumentModal
+        activeTab={activeLegalDoc}
+        profile={profile}
+        onClose={() => setActiveLegalDoc(null)}
+        onChangeTab={(tab) => setActiveLegalDoc(tab)}
+        onOpenCookiePreferences={() => setCookiePrefsOpen(true)}
       />
     </div>
   );

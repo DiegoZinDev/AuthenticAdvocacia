@@ -3,7 +3,6 @@ import type {
   ContextSignal,
   ContextState,
   LeadOriginPreset,
-  LegalCase,
   NeuralTelemetrySnapshot,
   PersonaId,
   PersonaScores,
@@ -982,93 +981,101 @@ export interface LegalAlertInfo {
 
 export const LEGAL_ALERT_BY_PERSONA: Record<PersonaId, LegalAlertInfo> = {
   geral: {
-    tag: 'Base Jurídica & Prazos',
-    statute: 'Tutela de Urgência (Art. 300 CPC) & Análise Documental',
+    tag: 'Nota Informativa & Prazos',
+    statute: 'Análise Documental & Prazos Legais (CPC / Legislação Especial)',
     detail:
-      'A verificação imediata de prazos prescricionais e provas documentais preserva liminares e evita perda irreversível de direitos.',
+      'A verificação prévia de prazos prescricionais e da documentação disponível contribui para uma avaliação jurídica técnica e segura.',
   },
   imobiliario: {
-    tag: 'Jurisprudência & Prazo Imobiliário',
-    statute: 'Súmula 543 do STJ & Lei do Distrato',
+    tag: 'Referência Informativa Imobiliária',
+    statute: 'Súmula 543 do STJ & Lei nº 13.786/2018 (Lei do Distrato)',
     detail:
-      'Retenção abusiva pela construtora em caso de atraso ou culpa da incorporadora garante restituição integral (100%) com juros e correção.',
+      'A legislação e a jurisprudência estabelecem parâmetros específicos para retenções contratuais, atraso na entrega e regularização registral, avaliados caso a caso.',
   },
   trabalhista: {
-    tag: 'Prazo Prescricional Crítico',
-    statute: 'Prazo Prescricional Bienal da CLT (Art. 7º, XXIX, CF)',
+    tag: 'Informação sobre Prazo Prescricional',
+    statute: 'Prescrição Bienal e Quinquenal (Art. 7º, XXIX, Constituição Federal)',
     detail:
-      'O trabalhador tem até 2 anos após o desligamento para ajuizar ação e cobrar os últimos 5 anos de verbas sonegadas (vínculo PJ, horas extras, FGTS).',
+      'A Constituição prevê o prazo de até 2 anos após o término do contrato de trabalho para eventual discussão judicial de verbas relativas aos últimos 5 anos.',
   },
   familia: {
-    tag: 'Medida Cautelar Preventiva',
-    statute: 'Tutela Cautelar de Urgência (Art. 300 CPC) & Lei de Alimentos',
+    tag: 'Informação sobre Procedimentos Familiares',
+    statute: 'Código Civil, CPC & Lei de Alimentos (Lei nº 5.478/1968)',
     detail:
-      'Bloqueio preventivo de bens e fixação liminar de pensão podem ser deferidos em dias antes da citação da parte contrária.',
+      'Questões de partilha, guarda, alimentos e inventário podem tramitar de forma consensual ou judicial, sempre sob sigilo e análise documental individualizada.',
   },
   previdenciario: {
-    tag: 'Regra de Transição & Decadência',
-    statute: 'Regras de Transição (EC 103/2019) & Decadência Revisional',
+    tag: 'Referência Informativa Previdenciária',
+    statute: 'Regras de Transição (EC nº 103/2019) & Lei nº 8.213/1991',
     detail:
-      'Análise prévia do CNIS e PPP evita concessão vitalícia em valor inferior e preserva retroativos dos últimos 5 anos.',
+      'A conferência prévia do extrato CNIS, vínculos contributivos e laudos médicos auxilia na verificação dos requisitos administrativos antes de qualquer protocolo no INSS.',
   },
   consumidor: {
-    tag: 'Tutela Inibitória Bancária',
-    statute: 'Tutela de Urgência (CDC Art. 42) & Liminar em 48h',
+    tag: 'Referência Informativa Bancária',
+    statute: 'Código de Defesa do Consumidor (Lei nº 8.078/1990) & Normas do BACEN',
     detail:
-      'Negativações indevidas e fraudes bancárias/Pix admitem exclusão imediata do cadastro e devolução em dobro do indébito.',
+      'Registros de protocolos bancários, MED e comprovantes de contestação são documentos essenciais para a análise técnica de incidentes bancários ou negativações.',
   },
   saude: {
-    tag: 'Plantão Judicial de Saúde',
-    statute: 'Liminar no Plantão Judicial TJDFT & Lei 14.454/2022',
+    tag: 'Referência Informativa em Saúde',
+    statute: 'Lei nº 9.656/1998, Lei nº 14.454/2022 & Normas da ANS',
     detail:
-      'O rol da ANS é exemplificativo; cirurgias, próteses, medicamentos de alto custo e Home Care prescritos podem ser autorizados em horas.',
+      'O relatório médico circunstanciado e a justificativa por escrito da operadora são os elementos centrais examinados na avaliação de cobertura assistencial.',
   },
   empresarial: {
-    tag: 'Recuperação & Blindagem B2B',
-    statute: 'Execução de Título Extrajudicial & Dissolução Parcial (CPC Art. 600)',
+    tag: 'Referência Informativa Empresarial',
+    statute: 'Código Civil (Direito de Empresa) & Código de Processo Civil',
     detail:
-      'Medidas patrimoniais céleres (Sisbajud/Sniper) e blindagem societária protegem o caixa operacional.',
+      'A análise do contrato social, instrumentos comerciais e títulos executivos fundamenta estratégias consultivas, negociais ou contenciosas adequadas à empresa.',
   },
   criminal: {
-    tag: 'Plantão Criminal Imediato',
-    statute: 'Audiência de Custódia em 24h (Art. 310 CPP) & Habeas Corpus Liminar',
+    tag: 'Referência Informativa Penal',
+    statute: 'Constituição Federal (Art. 5º), CPP & Estatuto da OAB (Art. 7º)',
     detail:
-      'As primeiras horas após flagrante ou condução definem liberdade provisória e nulidade de provas ilícitas.',
+      'O acompanhamento técnico desde a fase policial ou audiência de custódia assegura a observância do devido processo legal e das garantias constitucionais.',
   },
 };
 
 function formatUrgencyLabel(level: NeuralTelemetrySnapshot['urgencyLevel']): string {
-  if (level === 'critica') return 'CRÍTICA (Plantão 24h)';
+  if (level === 'critica') return 'Prioritária (Horário Crítico)';
   if (level === 'elevada') return 'Elevada';
-  return 'Prioritária';
+  return 'Regular';
 }
 
 export function buildWhatsAppTriageDossier(
   whatsappNumber: string,
   lawyerName: string,
   state: ContextState,
-  focusedCase?: LegalCase | null
+  triageAnswers?: Array<{ dossierTag: string; optionLabel?: string }>,
+  additionalNote?: string
 ): { text: string; url: string } {
   const digits = whatsappNumber.replace(/\D/g, '') || '5561998421048';
   const normalizedPhone = digits.startsWith('55') ? digits : `55${digits}`;
   const shortLawyer = lawyerName.split(' ').slice(0, 2).join(' ') || 'Dr. Henrique';
   const persona = PERSONA_CONTENTS[state.activePersona];
-  const confidencePct = Math.round(state.confidence * 100);
   const urgencyLabel = formatUrgencyLabel(state.telemetry.urgencyLevel);
 
   const lines: string[] = [
-    `Olá, ${shortLawyer}. Preciso de orientação jurídica imediata.`,
-    `Área identificada: ${persona.areaLabel} (${persona.badgeSubtitle}).`,
+    `Olá, ${shortLawyer}. Gostaria de agendar uma conversa inicial com o escritório.`,
+    `Área de interesse: ${persona.areaLabel}.`,
   ];
 
-  if (focusedCase) {
-    lines.push(`Analisei o precedente de ${focusedCase.courtRef}: "${focusedCase.title}".`);
+  if (triageAnswers && triageAnswers.length > 0) {
+    lines.push('Resumo da triagem informativa:');
+    for (const item of triageAnswers) {
+      lines.push(`• ${item.dossierTag}`);
+    }
+  }
+
+  const cleanNote = additionalNote?.trim();
+  if (cleanNote) {
+    lines.push(`Observação adicional: ${cleanNote.slice(0, 220)}`);
   }
 
   lines.push(
-    `Urgência: ${urgencyLabel} • Contexto: ${state.accessPeriod} (${state.telemetry.deviceLabel}).`
+    `Período de acesso: ${state.accessPeriod} • Prioridade: ${urgencyLabel}.`
   );
-  lines.push(`[Triagem Auto-Seller • Confiança ${confidencePct}%]`);
+  lines.push('[Triagem Inicial Informativa — Pré-atendimento sob Sigilo Profissional]');
 
   const text = lines.join('\n');
   return {

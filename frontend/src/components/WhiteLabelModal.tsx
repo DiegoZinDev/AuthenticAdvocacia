@@ -302,6 +302,41 @@ export function WhiteLabelModal({
                 </label>
               </div>
 
+              <div className="form-grid-two">
+                <label className="field-group">
+                  <span>Modalidade OAB (Art. 44 CED)</span>
+                  <select
+                    value={draft.practiceModel ?? 'sociedade_advogados'}
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        practiceModel: e.target.value as LawyerProfile['practiceModel'],
+                      })
+                    }
+                  >
+                    <option value="advogado_autonomo">Advogado(a) Autônomo(a)</option>
+                    <option value="sociedade_individual">Sociedade Individual de Advocacia</option>
+                    <option value="sociedade_advogados">Sociedade de Advogados</option>
+                  </select>
+                </label>
+
+                <label className="field-group">
+                  <span>E-mail do Encarregado (DPO / LGPD)</span>
+                  <input
+                    type="email"
+                    value={draft.dpoEmail ?? ''}
+                    onChange={(e) => setDraft({ ...draft, dpoEmail: e.target.value })}
+                    placeholder="privacidade@escritorio.adv.br"
+                  />
+                </label>
+              </div>
+
+              <p className="whitelabel-oab-note">
+                Conformidade OAB: Nome, inscrição OAB e canal DPO são exibidos no rodapé
+                institucional. Vedada divulgação conjunta de atividades não advocatícias (Art. 1º,
+                §3º, Lei nº 8.906/1994).
+              </p>
+
               {feedback && (
                 <div className="modal-feedback">
                   <Check size={14} strokeWidth={2} aria-hidden="true" />
