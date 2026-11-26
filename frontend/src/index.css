@@ -2613,3 +2613,337 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   Local SEO FAQ, Hyperlocal NAP Coverage & White-Label SEO Studio
+   ========================================================================== */
+
+.local-seo-section {
+  padding: 84px 0;
+  background: var(--paper);
+  border-top: 1px solid var(--rule-dark);
+}
+
+.local-seo-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.local-seo-lead {
+  margin: 14px 0 26px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+.local-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.local-faq-item {
+  background: #ffffff;
+  border: 1px solid var(--rule-dark);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.local-faq-heading {
+  margin: 0;
+}
+
+.local-faq-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 16px 18px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.local-faq-trigger svg {
+  flex-shrink: 0;
+  color: var(--gold-deep);
+  transition: transform 0.2s ease;
+}
+
+.local-faq-trigger.is-open svg {
+  transform: rotate(180deg);
+}
+
+.local-faq-answer-wrap {
+  padding: 0 18px 16px;
+  border-top: 1px solid rgba(11, 21, 38, 0.06);
+}
+
+.local-faq-answer {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.local-nap-card {
+  background: var(--ivory);
+  border: 1px solid var(--rule-gold);
+  border-radius: 10px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.local-nap-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.local-nap-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.55rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--navy);
+}
+
+.local-nap-details {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.local-nap-details dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 2px;
+}
+
+.local-nap-details dd {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--navy);
+  line-height: 1.45;
+}
+
+.local-nap-subhead {
+  margin: 0 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.local-neighborhood-chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.local-neighborhood-chip {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--navy);
+  background: rgba(197, 155, 95, 0.14);
+  border: 1px solid rgba(197, 155, 95, 0.32);
+}
+
+.local-internal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.local-internal-link-chip {
+  padding: 6px 11px;
+  border-radius: 6px;
+  border: 1px solid var(--rule-dark);
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
+}
+
+.local-internal-link-chip:hover,
+.local-internal-link-chip.is-active {
+  border-color: var(--gold-deep);
+  background: rgba(197, 155, 95, 0.12);
+  color: var(--navy);
+}
+
+/* White-Label SEO Modal Tab & SERP Preview */
+.whitelabel-modal-wide {
+  max-width: 680px;
+}
+
+.whitelabel-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 28px 14px;
+  border-bottom: 1px solid var(--rule-dark);
+}
+
+.whitelabel-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.whitelabel-tab-btn.is-active {
+  background: rgba(197, 155, 95, 0.15);
+  border-color: rgba(197, 155, 95, 0.42);
+  color: var(--navy);
+}
+
+.seo-serp-preview {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid var(--rule-dark);
+}
+
+.seo-serp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.seo-score-pill {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.seo-score-pill.grade-ouro {
+  background: rgba(22, 163, 74, 0.14);
+  color: #166534;
+}
+
+.seo-score-pill.grade-bom {
+  background: rgba(197, 155, 95, 0.22);
+  color: var(--navy);
+}
+
+.seo-score-pill.grade-ajustar {
+  background: rgba(220, 38, 38, 0.12);
+  color: #991b1b;
+}
+
+.seo-serp-url {
+  margin: 0 0 3px;
+  font-size: 12px;
+  color: #15803d;
+  word-break: break-all;
+}
+
+.seo-serp-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a0dab;
+  line-height: 1.3;
+}
+
+.seo-serp-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: #4d5156;
+  line-height: 1.45;
+}
+
+.seo-audit-box {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.seo-audit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  font-size: 12px;
+}
+
+.seo-audit-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.35;
+}
+
+.seo-audit-list li.is-ok {
+  color: #166534;
+}
+
+.seo-audit-list li.is-warn {
+  color: #9a3412;
+}
+
+.seo-export-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 920px) {
+  .local-seo-grid,
+  .seo-audit-list {
+    grid-template-columns: 1fr;
+  }
+}

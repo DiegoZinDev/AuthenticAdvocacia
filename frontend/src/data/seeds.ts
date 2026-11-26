@@ -20,6 +20,25 @@ export const DEFAULT_LAWYER_PROFILE: LawyerProfile = {
   experienceYears: 17,
   editorialQuote:
     'Cada processo carrega um patrimônio, um vínculo familiar ou uma trajetória de trabalho. Técnica jurídica rigorosa existe para proteger o que não pode esperar.',
+  seo: {
+    siteUrl: 'https://authentic-advocacia.vercel.app',
+    cityName: 'Brasília',
+    stateCode: 'DF',
+    neighborhoods: ['Gama', 'Águas Claras', 'Taguatinga', 'Asa Sul', 'Asa Norte', 'Lago Sul'],
+    streetAddress: 'SCS Quadra 06, Bloco A, Sala 402 — Asa Sul',
+    postalCode: '70306-900',
+    latitude: '-15.7975',
+    longitude: '-47.8919',
+    openingHours: 'Mo-Fr 08:30-18:30',
+    googleBusinessUrl: '',
+    focusKeywords: [
+      'advogado em Brasília DF',
+      'advogado perto de mim Gama DF',
+      'escritório de advocacia Brasília',
+      'advogado previdenciário Brasília',
+      'advogado imobiliário DF',
+    ],
+  },
 };
 
 export const PERSONA_CONTENTS: Record<PersonaId, PersonaContent> = {
