@@ -12,16 +12,16 @@ import type {
   PersonaScores,
 } from '../types/legal';
 
-const DB_NAME = 'adv_autoseller_offline_v6_martins_queiroz';
+const DB_NAME = 'adv_autoseller_offline_v7_esriel_dias';
 const DB_VERSION = 1;
 const STORE_PROFILE = 'profile';
 const STORE_PERSONAS = 'personas';
 const STORE_CASES = 'cases';
 const STORE_TELEMETRY = 'telemetry_queue';
 
-const LS_PROFILE_KEY = 'adv_autoseller_profile_v6_martins_queiroz';
-const LS_TELEMETRY_KEY = 'adv_autoseller_telemetry_v6_martins_queiroz';
-const LS_CTX_KEY = 'adv_autoseller_ctx_v6_martins_queiroz';
+const LS_PROFILE_KEY = 'adv_autoseller_profile_v7_esriel_dias';
+const LS_TELEMETRY_KEY = 'adv_autoseller_telemetry_v7_esriel_dias';
+const LS_CTX_KEY = 'adv_autoseller_ctx_v7_esriel_dias';
 
 export interface PersistedSessionRecord {
   sessionId: string;
