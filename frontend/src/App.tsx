@@ -301,7 +301,7 @@ export function App() {
     setCookieConsent(saveCookieConsent(analyticsAndContext));
   }, []);
 
-  const dpoEmail = profile.dpoEmail?.trim() || 'privacidade@valencaadvocacia.adv.br';
+  const dpoEmail = profile.dpoEmail?.trim() || 'privacidade@heliofreitassantos.adv.br';
 
   return (
     <div className="editorial-app">
