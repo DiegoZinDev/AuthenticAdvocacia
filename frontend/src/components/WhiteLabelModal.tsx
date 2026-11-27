@@ -219,7 +219,7 @@ export function WhiteLabelModal({
     setSaving(true);
     await onReset();
     setSaving(false);
-    setFeedback('Restaurado para o perfil padrão Gilberto Miranda Advocacia.');
+    setFeedback('Restaurado para o perfil padrão Martins & Queiroz Advogados Associados.');
   };
 
   const currentSeo = resolveWhiteLabelSeoConfig(draft);
