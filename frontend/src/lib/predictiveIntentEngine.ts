@@ -12,6 +12,7 @@ import {
   persistSessionLocally,
   syncTelemetrySession,
 } from './offlineStore';
+import { resolvePersonaFromPathname } from './seoEngine';
 
 const COOKIE_NAME = 'adv_autoseller_ctx';
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
@@ -150,6 +151,26 @@ function normalizeText(value: string): string {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
+}
+
+function extractReferrerQuery(referrer: string): { query: string; host: string } {
+  if (!referrer) return { query: '', host: '' };
+  try {
+    const refUrl = new URL(referrer);
+    const query =
+      refUrl.searchParams.get('q') ||
+      refUrl.searchParams.get('p') ||
+      refUrl.searchParams.get('query') ||
+      refUrl.searchParams.get('text') ||
+      refUrl.searchParams.get('wd') ||
+      '';
+    return {
+      query: query.trim(),
+      host: refUrl.hostname.replace(/^www\./, ''),
+    };
+  } catch {
+    return { query: '', host: '' };
+  }
 }
 
 export function getAccessPeriodContext(): string {
@@ -526,6 +547,23 @@ export class PredictiveIntentEngine {
       });
     }
 
+    // Layer A0: Organic SEO friendly URL pathname (/atuacao/*) without needing UTM/simulator
+    const pathPersona = resolvePersonaFromPathname(url.pathname);
+    if (pathPersona && SPECIFIC_PERSONAS.includes(pathPersona)) {
+      forcedWinner = pathPersona;
+      scores[pathPersona] = Math.max(scores[pathPersona], 135);
+      lastSignal = {
+        source: 'url',
+        detail: `Rota orgânica SEO (${url.pathname})`,
+        personaId: pathPersona,
+        weight: 94,
+        timestamp: Date.now(),
+      };
+      signals.push(lastSignal);
+      originSummary = `Busca Orgânica SEO • ${PERSONA_CONTENTS[pathPersona].areaLabel}`;
+      semanticSummary = `URL amigável (${url.pathname}) → ${PERSONA_CONTENTS[pathPersona].areaLabel}`;
+    }
+
     // Layer A1: Explicit ?area= or ?tema=
     const explicitArea = normalizeText(areaParam || temaParam) as PersonaId;
     if (explicitArea && SPECIFIC_PERSONAS.includes(explicitArea)) {
@@ -544,7 +582,15 @@ export class PredictiveIntentEngine {
     }
 
     // Layer A2: Cross-Intent & Direct URL signals (utm_term, utm_campaign, q, tema, referrer)
-    const combinedInput = `${utmTerm} ${utmCampaign} ${queryQ} ${temaParam} ${referrer}`.trim();
+    const { query: referrerQuery, host: referrerHost } = extractReferrerQuery(referrer);
+    let safeDecodedReferrer = referrer;
+    try {
+      safeDecodedReferrer = decodeURIComponent(referrer);
+    } catch {
+      // Keep raw referrer if malformed percent-encoding
+    }
+    const referrerSignal = referrerQuery || safeDecodedReferrer;
+    const combinedInput = `${utmTerm} ${utmCampaign} ${queryQ} ${temaParam} ${referrerSignal}`.trim();
     if (combinedInput) {
       const { delta, matchedCrossRule } = evaluateCrossIntentAndKeywords(combinedInput, 42);
       let topArea: PersonaId | null = null;
@@ -564,10 +610,15 @@ export class PredictiveIntentEngine {
       if (topArea) {
         forcedWinner = topArea;
         scores[topArea] = Math.max(scores[topArea], 92);
-        const readable = (utmTerm || queryQ || temaParam || utmCampaign).replace(/[-_+]/g, ' ');
+        const readable = (utmTerm || queryQ || temaParam || utmCampaign || referrerQuery)
+          .replace(/[-_+]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
         lastSignal = {
           source: matchedCrossRule ? 'cross-intent' : 'url',
-          detail: matchedCrossRule ? matchedCrossRule.summary : `Sinal URL: "${readable}"`,
+          detail: matchedCrossRule
+            ? matchedCrossRule.summary
+            : `Sinal URL: "${readable || PERSONA_CONTENTS[topArea].areaLabel}"`,
           personaId: topArea,
           weight: topVal,
           timestamp: Date.now(),
@@ -575,10 +626,12 @@ export class PredictiveIntentEngine {
         signals.push(lastSignal);
         semanticSummary = matchedCrossRule
           ? matchedCrossRule.summary
-          : `"${readable}" → ${PERSONA_CONTENTS[topArea].areaLabel}`;
+          : `"${readable || PERSONA_CONTENTS[topArea].areaLabel}" → ${PERSONA_CONTENTS[topArea].areaLabel}`;
         originSummary = utmSource
           ? `${utmSource.toUpperCase()} (${utmMedium || 'busca'}): "${readable}"`
-          : `Busca: "${readable}"`;
+          : referrerQuery && !queryQ && !utmTerm
+            ? `Referrer (${referrerHost || 'buscador'}): "${readable}"`
+            : `Busca: "${readable || PERSONA_CONTENTS[topArea].areaLabel}"`;
       }
     }
 
