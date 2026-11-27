@@ -219,7 +219,7 @@ export function WhiteLabelModal({
     setSaving(true);
     await onReset();
     setSaving(false);
-    setFeedback('Restaurado para o perfil padrão Dra. Nájla Fagundes Advocacia.');
+    setFeedback('Restaurado para o perfil padrão Gilberto Miranda Advocacia.');
   };
 
   const currentSeo = resolveWhiteLabelSeoConfig(draft);
