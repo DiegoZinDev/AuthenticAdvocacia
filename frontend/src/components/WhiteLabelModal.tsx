@@ -219,7 +219,7 @@ export function WhiteLabelModal({
     setSaving(true);
     await onReset();
     setSaving(false);
-    setFeedback('Restaurado para o perfil padrão Dr. Henrique Valença.');
+    setFeedback('Restaurado para o perfil padrão Dr. Hélio de Freitas Santos.');
   };
 
   const currentSeo = resolveWhiteLabelSeoConfig(draft);

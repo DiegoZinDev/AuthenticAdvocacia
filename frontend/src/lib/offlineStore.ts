@@ -12,16 +12,16 @@ import type {
   PersonaScores,
 } from '../types/legal';
 
-const DB_NAME = 'adv_autoseller_offline_v1';
+const DB_NAME = 'adv_autoseller_offline_v2_helio';
 const DB_VERSION = 1;
 const STORE_PROFILE = 'profile';
 const STORE_PERSONAS = 'personas';
 const STORE_CASES = 'cases';
 const STORE_TELEMETRY = 'telemetry_queue';
 
-const LS_PROFILE_KEY = 'adv_autoseller_profile_v1';
-const LS_TELEMETRY_KEY = 'adv_autoseller_telemetry_v1';
-const LS_CTX_KEY = 'adv_autoseller_ctx_v1';
+const LS_PROFILE_KEY = 'adv_autoseller_profile_v2_helio';
+const LS_TELEMETRY_KEY = 'adv_autoseller_telemetry_v2_helio';
+const LS_CTX_KEY = 'adv_autoseller_ctx_v2_helio';
 
 export interface PersistedSessionRecord {
   sessionId: string;
