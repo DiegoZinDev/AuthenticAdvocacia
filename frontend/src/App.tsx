@@ -301,7 +301,7 @@ export function App() {
     setCookieConsent(saveCookieConsent(analyticsAndContext));
   }, []);
 
-  const dpoEmail = profile.dpoEmail?.trim() || 'privacidade@heliofreitassantos.adv.br';
+  const dpoEmail = profile.dpoEmail?.trim() || 'privacidade@ribeiroesilvadvogados.com';
 
   return (
     <div className="editorial-app">
