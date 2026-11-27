@@ -369,7 +369,7 @@ export class PredictiveIntentEngine {
   private sessionStartTs = Date.now();
 
   constructor(defaultPrimaryArea: PersonaId = 'imobiliario') {
-    const initialArea = defaultPrimaryArea === 'geral' ? 'imobiliario' : defaultPrimaryArea;
+    const initialArea: PersonaId = defaultPrimaryArea;
     this.state = {
       sessionId: 'init',
       activePersona: initialArea,
