@@ -301,7 +301,7 @@ export function App() {
     setCookieConsent(saveCookieConsent(analyticsAndContext));
   }, []);
 
-  const dpoEmail = profile.dpoEmail?.trim() || 'contato@martinsequeirozadv.com.br';
+  const dpoEmail = profile.dpoEmail?.trim() || 'esrieldiasadv@esrieldiasadv.com.br';
 
   return (
     <div className="editorial-app">

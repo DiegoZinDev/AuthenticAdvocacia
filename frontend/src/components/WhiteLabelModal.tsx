@@ -219,7 +219,7 @@ export function WhiteLabelModal({
     setSaving(true);
     await onReset();
     setSaving(false);
-    setFeedback('Restaurado para o perfil padrão Martins & Queiroz Advogados Associados.');
+    setFeedback('Restaurado para o perfil padrão Esriel Dias Advogados.');
   };
 
   const currentSeo = resolveWhiteLabelSeoConfig(draft);
