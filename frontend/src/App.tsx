@@ -301,7 +301,7 @@ export function App() {
     setCookieConsent(saveCookieConsent(analyticsAndContext));
   }, []);
 
-  const dpoEmail = profile.dpoEmail?.trim() || 'privacidade@ribeiroesilvadvogados.com';
+  const dpoEmail = profile.dpoEmail?.trim() || 'najlafagundes.adv@gmail.com';
 
   return (
     <div className="editorial-app">
