@@ -219,7 +219,7 @@ export function WhiteLabelModal({
     setSaving(true);
     await onReset();
     setSaving(false);
-    setFeedback('Restaurado para o perfil padrão Ribeiro & Silva Advogados.');
+    setFeedback('Restaurado para o perfil padrão Dra. Nájla Fagundes Advocacia.');
   };
 
   const currentSeo = resolveWhiteLabelSeoConfig(draft);
