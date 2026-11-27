@@ -267,6 +267,17 @@ export function App() {
     const result = await saveProfileWithFallback(nextProfile);
     setProfile(result.profile);
     setIsOfflineFallback(!result.synced);
+
+    const nextArea = result.profile.primaryArea;
+    engineRef.current?.selectAreaDirectly(
+      nextArea,
+      `Especialidade principal configurada: ${PERSONA_CONTENTS[nextArea].areaLabel}`
+    );
+    if (typeof window !== 'undefined' && window.history?.replaceState) {
+      const slug = getPersonaFriendlySlug(nextArea);
+      window.history.replaceState({ area: nextArea }, '', slug);
+    }
+
     return { synced: result.synced };
   }, []);
 
@@ -274,6 +285,16 @@ export function App() {
     const result = await resetProfileWithFallback();
     setProfile(result.profile);
     setIsOfflineFallback(!result.synced);
+
+    const defaultArea = result.profile.primaryArea;
+    engineRef.current?.selectAreaDirectly(
+      defaultArea,
+      `Especialidade restaurada: ${PERSONA_CONTENTS[defaultArea].areaLabel}`
+    );
+    if (typeof window !== 'undefined' && window.history?.replaceState) {
+      const slug = getPersonaFriendlySlug(defaultArea);
+      window.history.replaceState({ area: defaultArea }, '', slug);
+    }
   }, []);
 
   const handleSaveCookieConsent = useCallback((analyticsAndContext: boolean) => {
