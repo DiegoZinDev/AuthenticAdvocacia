@@ -301,7 +301,7 @@ export function App() {
     setCookieConsent(saveCookieConsent(analyticsAndContext));
   }, []);
 
-  const dpoEmail = profile.dpoEmail?.trim() || 'najlafagundes.adv@gmail.com';
+  const dpoEmail = profile.dpoEmail?.trim() || 'contato@gilbertomirandaadv.com.br';
 
   return (
     <div className="editorial-app">
