@@ -498,8 +498,7 @@ export class PredictiveIntentEngine {
     const sessionId = cookieCtx?.sessionId || localCtx?.sessionId || generateSessionId();
     const isReturningVisitor = Boolean(cookieCtx?.sessionId || localCtx?.sessionId);
 
-    const fallbackArea: PersonaId =
-      defaultPrimaryArea === 'geral' ? 'imobiliario' : defaultPrimaryArea;
+    const fallbackArea: PersonaId = defaultPrimaryArea;
 
     const scores: PersonaScores = {
       ...createEmptyScores(fallbackArea),
@@ -586,7 +585,7 @@ export class PredictiveIntentEngine {
     // Layer E: Cross-Session persistent memory for returning visitors
     if (!forcedWinner && isReturningVisitor) {
       const remembered = cookieCtx?.activePersona || localCtx?.activePersona;
-      if (remembered && SPECIFIC_PERSONAS.includes(remembered)) {
+      if (remembered && (remembered === 'geral' || SPECIFIC_PERSONAS.includes(remembered))) {
         forcedWinner = remembered;
         originSummary = `Memória Cross-Session • ${accessPeriod}`;
         semanticSummary = `Histórico anterior preservado → ${PERSONA_CONTENTS[remembered].areaLabel}`;
@@ -652,7 +651,7 @@ export class PredictiveIntentEngine {
    * updates global state immediately + synchronizes real browser URL bar cleanly.
    */
   public selectAreaDirectly(personaId: PersonaId, detail?: string): ContextState {
-    const target = personaId === 'geral' ? 'imobiliario' : personaId;
+    const target: PersonaId = personaId;
     const nextScores = createEmptyScores(target);
     nextScores[target] = 95;
 
